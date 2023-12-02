@@ -100,7 +100,12 @@ shared class ZombiesSpawns : RespawnSystem
 		if ( info !is null )
 		{
 			u8 spawn_property = 255;
-			
+			CPlayer@ p = getPlayerByUsername(info.username);
+			if (p !is null && p.getBlob() !is null)
+			{
+				RemovePlayerFromSpawn(info);
+			}
+
 			if(info.can_spawn_time > 0) {
 				f32 daytime = getMap().getDayTime();
 				if (daytime>0.2f&&daytime<0.75f) info.can_spawn_time = Maths::Min(30*30, info.can_spawn_time);
@@ -184,8 +189,12 @@ shared class ZombiesSpawns : RespawnSystem
                 RemovePlayerFromSpawn(player);
 
 				// spawn resources
-				SetMaterials( playerBlob, "mat_wood", 250 );
-				SetMaterials( playerBlob, "mat_stone", 100 );
+				if (getGameTime() < 300)
+				{
+					SetMaterials( playerBlob, "mat_wood", 250 );
+					SetMaterials( playerBlob, "mat_stone", 100 );
+				}
+				else SetMaterials( playerBlob, "mat_wood", 50 );
             }
         }
     }
@@ -491,8 +500,8 @@ shared class ZombiesCore : RulesCore
         if (!rules.isMatchRunning()) { return; }
 		if (getRules().get_bool("everyones_dead")) 
 		{
-		
             rules.SetCurrentState(GAME_OVER);
+			getRules().SetTeamWon(7);
 			int gamestart = rules.get_s32("gamestart");			
 			int day_cycle = getRules().daycycle_speed*60;			
 			int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;

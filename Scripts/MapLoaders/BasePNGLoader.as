@@ -675,7 +675,6 @@ CBlob@ spawnVehicle(CMap@ map, const string& in name, int offset, int team = -1)
 
 void AddMarker(CMap@ map, int offset, const string& in name)
 {
-	printf(name);
 	map.AddMarker(map.getTileWorldPosition(offset), name);
 }
 

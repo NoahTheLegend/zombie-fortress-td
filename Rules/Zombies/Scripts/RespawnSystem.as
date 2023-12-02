@@ -56,8 +56,7 @@ shared class RespawnSystem
 				return;
 			}
 		
-			if (player.getBlob() is null
-				|| player.getTeamNum() == getRules().getSpectatorTeamNum())
+			if (player.getBlob() is null)
 			{
 				SpawnPlayerIntoWorld(getSpawnLocation(p_info), p_info);
 			}

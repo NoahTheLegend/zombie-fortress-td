@@ -19,7 +19,7 @@ void onInit(CBlob@ this)
 	addPlayerClass(this, "Dwarfen Barbarian", "$knight_class_icon$", "knight", "Reckless axe fighter.");
 	addPlayerClass(this, "Crossbowman", "$archer_class_icon$", "archer", "Dangerous ranged fighter.");
 	addPlayerClass(this, "Flailman", "$flail_class_icon$", "flail", "Heavy flail weilder.");
-	addPlayerClass(this, "Rogue", "$rogue_class_icon$", "rogue", "A quick trapper & stabber.");
+	addPlayerClass(this, "Scout", "$rogue_class_icon$", "rogue", "A quick trapper & stabber.");
 	addPlayerClass(this, "Hammerman", "$crusher_class_icon$", "crusher", "Heavy hitting hammer weilder.");
 
 	this.getShape().SetStatic(true);

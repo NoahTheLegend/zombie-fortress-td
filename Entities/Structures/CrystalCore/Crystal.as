@@ -1,3 +1,5 @@
+#include "Hitters.as";
+
 const int shine_delay = 75;
 const int gradient_freq = 30;
 const f32 light_radius = 200.0f;
@@ -5,7 +7,7 @@ const f32 light_radius = 200.0f;
 void onInit(CBlob@ this)
 {
     // CLASS
-	this.set_Vec2f("class offset", Vec2f(0, 16));
+	this.set_Vec2f("class offset", Vec2f(0, 8));
 	this.set_string("required class", "builder");
 
     CShape@ shape = this.getShape();
@@ -72,6 +74,8 @@ void onInit(CBlob@ this)
 
     shiny.AddFrames(frames);
     sprite.SetAnimation(shiny);
+    shiny.frame = XORRandom(frames.size());
+    sprite.SetFrameIndex(XORRandom(frames.size()));
 
     this.setPosition(this.getPosition()-Vec2f(0,30));
     this.set_u32("shine_time", getGameTime()+shine_delay+XORRandom(shine_delay));
@@ -144,6 +148,8 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 {
 	if (hitterBlob is null) return damage;
     //if (hitterBlob.hasTag("zombie")) damage *= 2;
+
+    if (customData == Hitters::spikes) return 0;
 
     if (isClient() && damage > 0.25f && this.get_u32("sound_delay") < getGameTime())
     {

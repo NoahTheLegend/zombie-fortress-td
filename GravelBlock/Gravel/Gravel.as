@@ -9,6 +9,8 @@ void onInit(CBlob@ this)
 	this.getShape().SetRotationsAllowed(false);
 	this.getSprite().getConsts().accurateLighting = true;
 
+	getMap().server_SetTile(this.getPosition(), CMap::tile_castle_back);
+
 	this.getCurrentScript().tickFrequency = 0;
 
 	this.getShape().SetStatic(true);

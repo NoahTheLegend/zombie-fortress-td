@@ -142,8 +142,8 @@ void onTick(CBlob@ this)
 		if (getKnocked(this) < 1)
 		{
 			Sound::Play("/Stun", pos, 1.0f, this.getSexNum() == 0 ? 1.5f : 2.0f);
-			SetKnocked(this, 30);
-			this.setVelocity(vel * 1.75f);
+			SetKnocked(this, 20);
+			this.setVelocity(vel * 1.5f);
 		}
 
 	}

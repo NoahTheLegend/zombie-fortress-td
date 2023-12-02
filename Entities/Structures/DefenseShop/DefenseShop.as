@@ -26,19 +26,19 @@ void onInit( CBlob@ this )
 	this.set_u8("shop icon", 25);
 
 	{
-		ShopItem@ s = addShopItem(this, "Bomb", "$bomb$", "mat_bombs", Descriptions::bomb, true);
+		ShopItem@ s = addShopItem(this, "Bomb", "$bomb$", "mat_bombs", "Explosive bomb.", true);
 		AddRequirement(s.requirements, "coin", "", "Denars", 15);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Water Bomb", "$waterbomb$", "mat_waterbombs", Descriptions::waterbomb, true);
+		ShopItem@ s = addShopItem(this, "Water Bomb", "$waterbomb$", "mat_waterbombs", "A bottle with water.", true);
 		AddRequirement(s.requirements, "coin", "", "Denars", 10);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Mine", getTeamIcon("mine", "Mine.png", 0, Vec2f(16, 16), 1), "mine", Descriptions::mine, false);
+		ShopItem@ s = addShopItem(this, "Mine", getTeamIcon("mine", "Mine.png", 0, Vec2f(16, 16), 1), "mine", "Instant mine.", false);
 		AddRequirement(s.requirements, "coin", "", "Denars", 20);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Keg", getTeamIcon("keg", "Keg.png", 0, Vec2f(16, 16), 0), "keg", Descriptions::keg, false);
+		ShopItem@ s = addShopItem(this, "Keg", getTeamIcon("keg", "Keg.png", 0, Vec2f(16, 16), 0), "keg", "High-explosive barrel.", false);
 		AddRequirement(s.requirements, "coin", "", "Denars", 150);
 	}
 }

@@ -17,15 +17,13 @@ void onInit(CBlob@ this)
 
     shape.SetStatic(true);
 
-    this.set_TileType("background tile", 0);
-
     this.getSprite().SetZ(-5);
 	this.getShape().getConsts().mapCollisions = false;
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f(0, 0));
 	this.set_Vec2f("shop menu size", Vec2f(3,2));	
-	this.set_string("shop description", "Buy");
+	this.set_string("shop description", "Materialize");
 	this.set_u8("shop icon", 12);
 	{
 		ShopItem@ s = addShopItem(this, "Wood", "$mat_wood$", "mat_wood", "Transform coins into wood planks.", false);
@@ -33,21 +31,19 @@ void onInit(CBlob@ this)
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Stone", "$mat_stone$", "mat_stone", "Transform coins rocks.", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 50);
+		AddRequirement(s.requirements, "coin", "", "Denars", 125);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Gold", "$mat_gold$", "mat_gold", "Transform coins into gold ingots.", false);
 		AddRequirement(s.requirements, "coin", "", "Denars", 250);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Scroll of Scroll", "$scroll_drought$", "scroll_drought", "Evaporate nearby water.", false);
+		ShopItem@ s = addShopItem(this, "Scroll of Drought", "$scroll_drought$", "scroll_drought", "Evaporate nearby water.", false);
 		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 50);
-		s.spawnNothing = true;
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Scroll of Resurrection", "$scroll_revive$", "scroll_revive", "Resurrect two of dead dwarves to help you.", false);
 		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 150);
-		s.spawnNothing = true;
 	}
 }
 

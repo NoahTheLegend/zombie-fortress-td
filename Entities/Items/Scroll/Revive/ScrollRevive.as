@@ -52,8 +52,8 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 				}
 
 				b.server_SetPlayer(p);
-				CBlob@ food = server_CreateBlob("cake", 1, b.getPosition());
-				CBlob@ food1= server_CreateBlob("cake", 1, b.getPosition());
+				CBlob@ food = server_CreateBlob("food", 1, b.getPosition());
+				CBlob@ food1= server_CreateBlob("food", 1, b.getPosition());
 
 				if (food !is null) b.server_PutInInventory(food);
 				if (food1 !is null)b.server_PutInInventory(food1);
