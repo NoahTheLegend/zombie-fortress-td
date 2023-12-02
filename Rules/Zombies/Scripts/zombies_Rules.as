@@ -438,7 +438,7 @@ shared class ZombiesCore : RulesCore
 
 					for (u8 k = 0; k < Maths::Max(1, Maths::Ceil(pool/1000)); k++)
 					{
-						for (u8 i = 0; i < Maths::Min(dayNumber+10, names.size()); i++)
+						for (u8 i = 0; i < Maths::Min(dayNumber, names.size()); i++)
 						{
 							if (XORRandom(pool)< weights[i]) continue;
 							if (XORRandom(100) < probs[i])
