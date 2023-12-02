@@ -189,7 +189,7 @@ shared class ZombiesSpawns : RespawnSystem
                 RemovePlayerFromSpawn(player);
 
 				// spawn resources
-				if (getGameTime() < 300)
+				if (getGameTime() < 30)
 				{
 					SetMaterials( playerBlob, "mat_wood", 250 );
 					SetMaterials( playerBlob, "mat_stone", 100 );
