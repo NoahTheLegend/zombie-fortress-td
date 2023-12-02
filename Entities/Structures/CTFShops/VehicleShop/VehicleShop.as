@@ -32,19 +32,19 @@ void onInit(CBlob@ this)
 		string cata_icon = getTeamIcon("catapult", "VehicleIcons.png", team_num, Vec2f(32, 32), 0);
 		ShopItem@ s = addShopItem(this, "Catapult", cata_icon, "catapult", cata_icon + "\n\n\n" + Descriptions::catapult, false, true);
 		s.crate_icon = 4;
-		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::catapult);
+		AddRequirement(s.requirements, "coin", "", "Denars", CTFCosts::catapult);
 	}
 	{
 		string ballista_icon = getTeamIcon("ballista", "VehicleIcons.png", team_num, Vec2f(32, 32), 1);
 		ShopItem@ s = addShopItem(this, "Ballista", ballista_icon, "ballista", ballista_icon + "\n\n\n" + Descriptions::ballista, false, true);
 		s.crate_icon = 5;
-		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::ballista);
+		AddRequirement(s.requirements, "coin", "", "Denars", CTFCosts::ballista);
 	}
 	{
 		string outpost_icon = getTeamIcon("outpost", "VehicleIcons.png", team_num, Vec2f(32, 32), 6);
 		ShopItem@ s = addShopItem(this, "Outpost", outpost_icon, "outpost", outpost_icon + "\n\n\n" + Descriptions::outpost, false, true);
 		s.crate_icon = 7;
-		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::outpost_coins);
+		AddRequirement(s.requirements, "coin", "", "Denars", CTFCosts::outpost_coins);
 		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 50);
 	}
 	{
@@ -53,7 +53,7 @@ void onInit(CBlob@ this)
 		s.customButton = true;
 		s.buttonwidth = 2;
 		s.buttonheight = 1;
-		AddRequirement(s.requirements, "coin", "", "Coins", 50);
+		AddRequirement(s.requirements, "coin", "", "Denars", 50);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Ballista Shells", "$mat_bomb_bolts$", "mat_bomb_bolts", "$mat_bomb_bolts$\n\n\n" + Descriptions::ballista_bomb_ammo, false, false);
@@ -61,7 +61,7 @@ void onInit(CBlob@ this)
 		s.customButton = true;
 		s.buttonwidth = 2;
 		s.buttonheight = 1;
-		AddRequirement(s.requirements, "coin", "", "Coins", 40);
+		AddRequirement(s.requirements, "coin", "", "Denars", 40);
 	}
 }
 

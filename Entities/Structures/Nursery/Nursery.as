@@ -26,26 +26,26 @@ void onInit( CBlob@ this )
 
 	{
 		ShopItem@ s = addShopItem( this, "Oak tree seed", "$tree_bushy$", "tree_bushy", "Oak seed", false);
-		AddRequirement( s.requirements, "coin", "Oak seed", "Coins", 750 );
+		AddRequirement( s.requirements, "coin", "Oak seed", "Denars", 750 );
 		s.spawnNothing = true;
 	}
 	{	 
 		ShopItem@ s = addShopItem( this, "Pine tree seed", "$tree_pine$", "tree_pine", "Pine seed", false);
-		AddRequirement( s.requirements, "coin", "Pine seed", "Coins", 750 );
+		AddRequirement( s.requirements, "coin", "Pine seed", "Denars", 750 );
 		s.spawnNothing = true;
 	}
 	/*{
 		ShopItem@ s = addShopItem( this, "Grain seed", "$grain$", "-g", "Grain seed", false);
-		AddRequirement( s.requirements, "coin", "Grain seed", "Coins", 20);
+		AddRequirement( s.requirements, "coin", "Grain seed", "Denars", 20);
 		s.spawnNothing = true;
 	}*/
 	{
 		ShopItem@ s = addShopItem( this, "Bush seed", "$bush$", "bush", "Bush seed", false);
-		AddRequirement( s.requirements, "coin", "Bush seed", "Coins", 5 );
+		AddRequirement( s.requirements, "coin", "Bush seed", "Denars", 5 );
 	}
 	{
 		ShopItem@ s = addShopItem( this, "Flowers seeds", "$flowers$", "flowers", "Flowers seeds", false);
-		AddRequirement( s.requirements, "coin", "Flowers seeds", "Coins", 10 );
+		AddRequirement( s.requirements, "coin", "Flowers seeds", "Denars", 10 );
 	}
 	
 	this.set_string("required class", "builder");

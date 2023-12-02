@@ -416,3 +416,11 @@ void onHitBlob( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob
 	}*/
 }
 
+void onDie(CBlob@ this)
+{
+	CPlayer@ killer = this.getPlayerOfRecentDamage();
+	if (killer !is null)
+	{
+		killer.setKills(killer.getKills() + 1);
+	}
+}

@@ -165,7 +165,6 @@ shared class ZombiesSpawns : RespawnSystem
             if (player.getTeamNum() != int(p_info.team))
             {
 				player.server_setTeamNum(1);
-				warn("team"+p_info.team);
 			}
 
 			// remove previous players blob	  			
@@ -470,7 +469,6 @@ shared class ZombiesCore : RulesCore
         CTFPlayerInfo p(player.getUsername(), 0, "builder" );
         players.push_back(p);
         ChangeTeamPlayerCount(p.team, 1);
-		warn("sync");
 		getRules().Sync("gold_structures",true);
     }
 

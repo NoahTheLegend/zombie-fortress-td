@@ -36,17 +36,17 @@ void onInit(CBlob@ this)
 	{
 		ShopItem@ s = addShopItem(this, "Drill", getTeamIcon("drill", "Drill.png", team_num, Vec2f(32, 16), 0), "drill", Descriptions::drill, false);
 		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 250);
-		AddRequirement(s.requirements, "coin", "", "Coins", 100);
+		AddRequirement(s.requirements, "coin", "", "Denars", 100);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Sponge", "$sponge$", "sponge", Descriptions::sponge, false);
-		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::sponge);
+		AddRequirement(s.requirements, "coin", "", "Denars", CTFCosts::sponge);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Filled Bucket", "$_buildershop_filled_bucket$", "filled_bucket", Descriptions::filled_bucket, false);
 		s.spawnNothing = true;
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", CTFCosts::bucket_wood);
-		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::filled_bucket);
+		AddRequirement(s.requirements, "coin", "", "Denars", CTFCosts::filled_bucket);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Boulder", "$boulder$", "boulder", Descriptions::boulder, false);
@@ -66,7 +66,7 @@ void onInit(CBlob@ this)
 	{
 		ShopItem@ s = addShopItem(this, "Trampoline", getTeamIcon("trampoline", "Trampoline.png", team_num, Vec2f(32, 16), 3), "trampoline", Descriptions::trampoline, false);
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 1000);
-        AddRequirement(s.requirements, "coin", "", "Coins", 100);
+        AddRequirement(s.requirements, "coin", "", "Denars", 100);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Saw", getTeamIcon("saw", "VehicleIcons.png", team_num, Vec2f(32, 32), 3), "saw", Descriptions::saw, false);
@@ -81,8 +81,8 @@ void onInit(CBlob@ this)
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", CTFCosts::crate_wood);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Crate (coins)", getTeamIcon("crate", "Crate.png", team_num, Vec2f(32, 16), 5), "crate", Descriptions::crate, false);
-		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::crate);
+		ShopItem@ s = addShopItem(this, "Crate (denars)", getTeamIcon("crate", "Crate.png", team_num, Vec2f(32, 16), 5), "crate", Descriptions::crate, false);
+		AddRequirement(s.requirements, "coin", "", "Denars", CTFCosts::crate);
 	}
 }
 

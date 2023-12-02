@@ -29,6 +29,33 @@ void onTick(CBlob@ this)
 {
 	this.Untag("prevent crouch");
 	DoKnockedUpdate(this);
+
+	// for scoreboard render
+	CInventory@ inv = this.getInventory();
+	if (inv is null) return;
+
+	if ((getGameTime()+this.getNetworkID()) % 30 != 0) return;
+
+	string[] inv_items;
+	u16[]     sprite_frames;
+	Vec2f[]  sprite_sizes;
+	u16[] quantities;
+	for (u8 i = 0; i < inv.getInventorySlots().x * inv.getInventorySlots().y; i++)
+	{
+		CBlob@ item = inv.getItem(i);
+		if (item is null || item.getSprite() is null) continue;
+		
+		SpriteConsts@ consts = item.getSprite().getConsts();
+		inv_items.push_back(consts.filename);
+		sprite_frames.push_back(item.inventoryIconFrame);
+		sprite_sizes.push_back(Vec2f(consts.frameWidth, consts.frameHeight));
+		quantities.push_back(item.getQuantity());
+	}
+
+	this.set("scoreboard_items", inv_items);
+	this.set("scoreboard_item_frames", sprite_frames);
+	this.set("scoreboard_item_sizes", sprite_sizes);
+	this.set("scoreboard_item_quantities", quantities);
 }
 
 // pick up efffects

@@ -520,6 +520,12 @@ void dropArm( CBlob@ this )
 
 void onDie( CBlob@ this )
 {
+	CPlayer@ killer = this.getPlayerOfRecentDamage();
+	if (killer !is null)
+	{
+		killer.setKills(killer.getKills() + 1);
+	}
+
 	if (!getNet().isServer()) return;
 	dropArm(this);
 	// Random Chance arms are alive

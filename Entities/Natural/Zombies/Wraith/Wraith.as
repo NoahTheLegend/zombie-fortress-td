@@ -422,6 +422,12 @@ void onCollision( CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f poin
 
 void onDie(CBlob@ this)
 {
+	CPlayer@ killer = this.getPlayerOfRecentDamage();
+	if (killer !is null)
+	{
+		killer.setKills(killer.getKills() + 1);
+	}
+	
 	this.Tag("activated");
 	this.set_s32("explosion_timer", getGameTime() + this.get_f32("keg_time"));
 	this.Tag("exploding");				

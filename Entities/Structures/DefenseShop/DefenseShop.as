@@ -27,19 +27,19 @@ void onInit( CBlob@ this )
 
 	{
 		ShopItem@ s = addShopItem(this, "Bomb", "$bomb$", "mat_bombs", Descriptions::bomb, true);
-		AddRequirement(s.requirements, "coin", "", "Coins", 15);
+		AddRequirement(s.requirements, "coin", "", "Denars", 15);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Water Bomb", "$waterbomb$", "mat_waterbombs", Descriptions::waterbomb, true);
-		AddRequirement(s.requirements, "coin", "", "Coins", 10);
+		AddRequirement(s.requirements, "coin", "", "Denars", 10);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Mine", getTeamIcon("mine", "Mine.png", 0, Vec2f(16, 16), 1), "mine", Descriptions::mine, false);
-		AddRequirement(s.requirements, "coin", "", "Coins", 20);
+		AddRequirement(s.requirements, "coin", "", "Denars", 20);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Keg", getTeamIcon("keg", "Keg.png", 0, Vec2f(16, 16), 0), "keg", Descriptions::keg, false);
-		AddRequirement(s.requirements, "coin", "", "Coins", 150);
+		AddRequirement(s.requirements, "coin", "", "Denars", 150);
 	}
 }
 
