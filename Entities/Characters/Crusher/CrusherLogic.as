@@ -350,7 +350,7 @@ void onTick(CBlob@ this)
 			}
 			else if (delta > DELTA_BEGIN_ATTACK && delta < 10)
 			{
-				DoAttack(this, 3.75f, -(vec.Angle()), 120.0f, Hitters::sword, delta, knight); // SLASH 2.0 = 2hp
+				DoAttack(this, 4.5f, -(vec.Angle()), 120.0f, Hitters::sword, delta, knight); // SLASH 2.0 = 2hp
 			}
 			else if (delta >= KnightVars::slash_time ||
 			         (knight.doubleslash && delta >= KnightVars::double_slash_time))

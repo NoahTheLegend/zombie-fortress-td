@@ -151,7 +151,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 
     if (customData == Hitters::spikes) return 0;
 
-    if (isClient() && damage > 0.25f && this.get_u32("sound_delay") < getGameTime())
+    if (isClient() && this.get_u32("sound_delay") < getGameTime())
     {
         this.set_u32("sound_delay", getGameTime()+30);
         this.getSprite().PlayRandomSound("crystal_hit", 1.0f, 0.85f+XORRandom(31)*0.01f);

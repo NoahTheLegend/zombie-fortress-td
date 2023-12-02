@@ -26,9 +26,9 @@ void onInit(CBlob@ this)
 	float difficulty = getRules().get_f32("difficulty")/4.0;
 	if (difficulty<1.0) difficulty=1.0;
 	if (difficulty>3.0) difficulty=3.0;
-	vars.walkForce.Set(12.0f,0.0f);
-	vars.runForce.Set(12.0f,0.0f);
-	vars.slowForce.Set(4.0f,0.0f);
+	vars.walkForce.Set(10.0f,0.0f);
+	vars.runForce.Set(10.0f,0.0f);
+	vars.slowForce.Set(6.0f,0.0f);
 	vars.jumpForce.Set(0.0f,-1.33f);
 	vars.maxVelocity = difficulty;
 	this.set( "vars", vars );

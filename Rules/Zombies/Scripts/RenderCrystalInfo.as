@@ -20,6 +20,8 @@ void onRender(CRules@ this)
 
         Vec2f pos = Vec2f(20, 20 + (100 * i));
         GUI::DrawIcon(filename, sprite.animation !is null ? sprite.animation.frame : 0, Vec2f(consts.frameWidth, consts.frameHeight), pos, 0.6f);
-        GUI::DrawTextCentered(hp+"%", pos + Vec2f(28,92), SColor(255,255,255,255));
+        GUI::DrawTextCentered(hp+"%", pos + Vec2f(28,
+        92), SColor(255,255,255,255));
     }
+    GUI::DrawTextCentered("HP: +"+(Maths::Round(getPlayersCount())*0.1f*100.0f)+"%", Vec2f(48,18), SColor(255,255,255,255));
 }

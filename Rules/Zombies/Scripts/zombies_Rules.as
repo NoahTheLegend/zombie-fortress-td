@@ -6,7 +6,10 @@
 #include "CTF_Structs.as";
 #include "RulesCore.as";
 #include "RespawnSystem.as";
-#include "zombies_Technology.as";  
+#include "zombies_Technology.as";
+
+const int base_pool = 1500;
+const int day_pool = 200;
 
 //simple config function - edit the variables below to change the basics
 
@@ -370,13 +373,16 @@ shared class ZombiesCore : RulesCore
 
 		CMap@ map = getMap();
 		if (map.getDayTime() > 0.3f && map.getDayTime() < 0.75f)
-			rules.set_f32("pool", 500 + (125+XORRandom(125)) * dayNumber);
+		{				
+			f32 mod = Maths::Log(dayNumber)+Maths::Min(10, dayNumber);
+			rules.set_f32("pool", base_pool + getPlayersCount()/2 * (day_pool+XORRandom(day_pool)) * mod);
+		}
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) { rules.SetCurrentState(GAME);}
 		rules.set_f32("difficulty",difficulty/3.0);
 		int intdif = difficulty;
 		if (intdif<=0) intdif=1;
-		int spawnRate = getTicksASecond() * Maths::Max(1, (6-(difficulty)))/2;
+		int spawnRate = 300/((dayNumber+1)/2); /////////////
 		int extra_zombies = 0;
 		if (dayNumber > 10) extra_zombies=(dayNumber-10)*10;
 		if (extra_zombies>max_zombies-10) extra_zombies=max_zombies-10;
@@ -425,21 +431,24 @@ shared class ZombiesCore : RulesCore
 					Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
 					
 					string[] names = {"Skeleton", "Zombie", "ZombieArm", "ZombieKnight", "Greg", "Wraith"};
-					int[]    weights={25,         125,       50,          500,            300,   500};
-					int[]    probs  ={33,         50,        25,          15,             10,     15};
+					int[]    weights={25,         125,       50,          500,            150,   250};
+					int[]    probs  ={33,         50,        25,          10,             10,     15};
 
 					int pool = int(rules.get_f32("pool"));
-				
-					for (u8 i = 0; i < Maths::Min(dayNumber+1, names.size()); i++)
-					{
-						if (XORRandom(pool)< weights[i]) continue;
-						if (XORRandom(100) < probs[i])
-						{
-							Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
-							server_CreateBlob(names[i], -1, sp);
-							rules.add_f32("pool", -weights[i]);
 
-							printf("Spawning: "+names[i]+" remaining pool: "+pool);
+					for (u8 k = 0; k < Maths::Max(1, Maths::Ceil(pool/1000)); k++)
+					{
+						for (u8 i = 0; i < Maths::Min(dayNumber+10, names.size()); i++)
+						{
+							if (XORRandom(pool)< weights[i]) continue;
+							if (XORRandom(100) < probs[i])
+							{
+								Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
+								server_CreateBlob(names[i], -1, sp);
+								rules.add_f32("pool", -weights[i]);
+
+								printf("Spawning: "+names[i]+" remaining pool: "+int(rules.get_f32("pool")+" roll: "+k);
+							}
 						}
 					}
 					
@@ -574,8 +583,9 @@ void Reset(CRules@ this)
 	int gamestart = this.get_s32("gamestart");			
 	int day_cycle = getRules().daycycle_speed*60;			
 	int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
+
 	f32 mod = Maths::Log(dayNumber)+Maths::Min(10, dayNumber);
-	this.set_f32("pool", 500 + getPlayersCount()/2 * (100+XORRandom(100)) * mod);
+	this.set_f32("pool", base_pool + getPlayersCount()/2 * (day_pool+XORRandom(day_pool)) * mod);
 
     printf("Restarting rules script: " + getCurrentScriptName() );
     ZombiesSpawns spawns();
