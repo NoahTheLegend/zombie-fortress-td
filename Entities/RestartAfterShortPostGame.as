@@ -2,7 +2,7 @@
 
 #define SERVER_ONLY
 
-const int cooldown = 900;
+const int cooldown = 1200;
 
 void onRestart(CRules@ this)
 {

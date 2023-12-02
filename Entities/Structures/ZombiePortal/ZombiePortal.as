@@ -42,15 +42,15 @@ void onDie(CBlob@ this)
 
 	if (portals.length == 0)
 	{
-		u8 team = 0;
+		u8 team = 1;
 		getRules().SetTeamWon(team);
 		getRules().SetCurrentState(GAME_OVER);
 		CTeam@ teamis = getRules().getTeam(team);
+		getRules().set_s32("restart_rules_after_game", getGameTime() + 1200);
+
 		if (teamis !is null)
 		{
 			getRules().SetGlobalMessage(teamis.getName() + ", you've destroyed all portals, congratulations!");
-			getRules().set_s32("restart_rules_after_game", getGameTime() + 900);
-
 			CBlob@[] zombies;
 			getBlobsByTag("zombie", @zombies);
 			for (u16 i = 0; i < zombies.length; i++)
