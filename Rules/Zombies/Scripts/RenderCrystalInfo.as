@@ -1,0 +1,5 @@
+
+void onRender(CRules@ this)
+{
+    
+}
