@@ -23,5 +23,5 @@ void onRender(CRules@ this)
         GUI::DrawTextCentered(hp+"%", pos + Vec2f(28,
         92), SColor(255,255,255,255));
     }
-    GUI::DrawTextCentered("HP: +"+(Maths::Round(getPlayersCount())*0.1f*100.0f)+"%", Vec2f(48,18), SColor(255,255,255,255));
+    GUI::DrawTextCentered("HP: +"+(Maths::Round(getPlayersCount())*0.075f*100.0f)+"%", Vec2f(48,18), SColor(255,255,255,255));
 }

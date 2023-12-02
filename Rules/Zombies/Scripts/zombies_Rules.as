@@ -447,7 +447,7 @@ shared class ZombiesCore : RulesCore
 								server_CreateBlob(names[i], -1, sp);
 								rules.add_f32("pool", -weights[i]);
 
-								printf("Spawning: "+names[i]+" remaining pool: "+int(rules.get_f32("pool")+" roll: "+k);
+								printf("Spawning: "+names[i]+" remaining pool: "+int(rules.get_f32("pool"))+" roll: "+k);
 							}
 						}
 					}
