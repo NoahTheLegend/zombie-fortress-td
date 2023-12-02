@@ -193,8 +193,6 @@ shared class ZombiesSpawns : RespawnSystem
     {
         CTFPlayerInfo@ info = cast<CTFPlayerInfo@>(p_info);
 
-        if (info is null) { warn("Zombies LOGIC: Couldn't get player info ( in bool canSpawnPlayer(PlayerInfo@ p_info) ) "); return false; }
-
 		//return true;
         //if (force) { return true; }
 
@@ -209,6 +207,23 @@ shared class ZombiesSpawns : RespawnSystem
 			CMap@ map = getMap();
 			if(map !is null)
 			{
+				CBlob@[] crystals;
+				getBlobsByTag("crystal", @crystals);
+				if (crystals.length > 0)
+				{
+					if (crystals.length == 1 && crystals[0] !is null)
+						return crystals[0].getPosition();
+
+					u8 rand = 0;
+					for (u8 i = 0; i < 10; i++)
+					{
+						rand = XORRandom(crystals.length);
+					}
+
+					if (crystals[rand] !is null)
+						return crystals[rand].getPosition();
+				}
+				
 				f32 x = XORRandom(2) == 0 ? 32.0f : map.tilemapwidth * map.tilesize - 32.0f;
 				return Vec2f(x, map.getLandYAtX(s32(x/map.tilesize))*map.tilesize - 16.0f);
 			}
@@ -330,7 +345,6 @@ shared class ZombiesCore : RulesCore
 
     void Update()
     {
-		
         if (rules.isGameOver()) { return; }
 		int day_cycle = getRules().daycycle_speed * 60;
 		int transition = rules.get_s32("transition");
@@ -342,12 +356,16 @@ shared class ZombiesCore : RulesCore
 		float actdiff = 4.0*((getGameTime()-gamestart)/getTicksASecond()/day_cycle);
 		int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
 		if (actdiff>9) { actdiff=9; difficulty=difficulty-1.0; } else { difficulty=1.0; }
+
+		CMap@ map = getMap();
+		if (map.getDayTime() > 0.3f && map.getDayTime() < 0.75f)
+			rules.set_f32("pool", 500 + (125+XORRandom(125)) * dayNumber);
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) { rules.SetCurrentState(GAME);}
 		rules.set_f32("difficulty",difficulty/3.0);
 		int intdif = difficulty;
 		if (intdif<=0) intdif=1;
-		int spawnRate = getTicksASecond() * (6-(difficulty/2.0));
+		int spawnRate = getTicksASecond() * Maths::Max(1, (6-(difficulty)));
 		int extra_zombies = 0;
 		if (dayNumber > 10) extra_zombies=(dayNumber-10)*10;
 		if (extra_zombies>max_zombies-10) extra_zombies=max_zombies-10;
@@ -364,7 +382,6 @@ shared class ZombiesCore : RulesCore
 			
 	    if (getGameTime() % (spawnRate) == 0 && num_zombies<100+extra_zombies)
         {
-			
 			CMap@ map = getMap();
 			if (map !is null)
 			{
@@ -390,35 +407,38 @@ shared class ZombiesCore : RulesCore
 					//zombiePlaces.push_back(Vec2f((map.tilemapwidth-8)*4,(map.tilemapheight/2)*8));
 				}
 				//if (map.getDayTime()>0.1 && map.getDayTime()<0.2)
-				if (map.getDayTime()>0.8 || map.getDayTime()<0.1)
+				if (map.getDayTime() > 0.85 || map.getDayTime()<0.1)
 				{
 					//Vec2f sp(XORRandom(4)*(map.tilemapwidth/4)*8+(90*8),(map.tilemapheight/2)*8);
 					
 					Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
-					int r;
-					if (actdiff>9) r = XORRandom(9); else r = XORRandom(actdiff);
-					int rr = XORRandom(8);
-					if (r==8 && rr<wraiteRate)
-					server_CreateBlob( "Wraith", -1, sp);
-					else										
-					if (r==7 && rr<3)
-					server_CreateBlob( "Greg", -1, sp);
-					else					
-					if (r==6)
-					server_CreateBlob( "ZombieKnight", -1, sp);
-					else
-					if (r>=3)
-					server_CreateBlob( "Zombie", -1, sp);
-					else
-					server_CreateBlob( "Skeleton", -1, sp);
-					if (transition == 1 && (dayNumber % 5) == 0)
+					
+					string[] names = {"Skeleton", "Zombie", "ZombieArm", "ZombieKnight", "Greg", "Wraith"};
+					int[]    weights={25,         125,       50,          500,            300,   500};
+					int[]    probs  ={33,         50,        25,          15,             10,     15};
+
+					int pool = int(rules.get_f32("pool"));
+				
+					for (u8 i = 0; i < Maths::Min(dayNumber+1, names.size()); i++)
+					{
+						if (XORRandom(pool)< weights[i]) continue;
+						if (XORRandom(100) < probs[i])
+						{
+							Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
+							server_CreateBlob(names[i], -1, sp);
+							rules.add_f32("pool", -weights[i]);
+
+							printf("Spawning: "+names[i]+" remaining pool: "+pool);
+						}
+					}
+					
+					/*if (transition == 1 && (dayNumber % 5) == 0)
 					{
 						transition=0;
 						rules.set_s32("transition",0);
 						Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
 						server_CreateBlob( "BossZombieKnight", -1, sp);
-					}
-					
+					}*/
 				}
 				else
 				{
@@ -541,6 +561,12 @@ void onRestart(CRules@ this)
 
 void Reset(CRules@ this)
 {
+	int gamestart = this.get_s32("gamestart");			
+	int day_cycle = getRules().daycycle_speed*60;			
+	int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
+	f32 mod = Maths::Log(dayNumber)+Maths::Min(10, dayNumber);
+	this.set_f32("pool", 500 + getPlayersCount()/2 * (100+XORRandom(100)) * mod);
+
     printf("Restarting rules script: " + getCurrentScriptName() );
     ZombiesSpawns spawns();
     ZombiesCore core(this, spawns);

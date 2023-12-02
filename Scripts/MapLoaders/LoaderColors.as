@@ -172,6 +172,11 @@ namespace map_colors
 		nursery                = 0xFFD9FFDF, // ARGB(255, 217, 255, 223);
 		research               = 0xFFE1E1E1, // ARGB(255, 225, 225, 225);
 
+		crystal_glacial        = 0xFF61d0df,
+		crystal_nebula		   = 0xFFad88db,
+		crystal_celestial      = 0xFF213a73,
+		crystal_random         = 0xFFc34097,
+
 		// MARKERS
 		blue_main_spawn        = 0xFF00FFFF, // ARGB(255,   0, 255, 255);
 		red_main_spawn         = 0xFFFF0000, // ARGB(255, 255,   0,   0);

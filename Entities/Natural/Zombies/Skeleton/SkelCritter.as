@@ -26,11 +26,11 @@ void onInit(CBlob@ this)
 	float difficulty = getRules().get_f32("difficulty")/4.0;
 	if (difficulty<1.0) difficulty=1.0;
 	if (difficulty>3.0) difficulty=3.0;
-	vars.walkForce.Set(difficulty*4.0f,0.0f);
-	vars.runForce.Set(difficulty*4.0f,0.0f);
+	vars.walkForce.Set(difficulty*8.0f,0.0f);
+	vars.runForce.Set(difficulty*8.0f,0.0f);
 	vars.slowForce.Set(difficulty*1.5f,0.0f);
-	vars.jumpForce.Set(0.0f,-1.0f);
-	vars.maxVelocity = difficulty*2.0f;
+	vars.jumpForce.Set(0.0f,-1.5f);
+	vars.maxVelocity = difficulty*1.5f;
 	this.set( "vars", vars );
 
 	// force no team

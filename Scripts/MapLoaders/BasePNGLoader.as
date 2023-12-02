@@ -270,6 +270,16 @@ class PNGLoader
 			case map_colors::nursery:         autotile(offset); spawnBlob(map, "nursery",     offset); break;
 			case map_colors::research:        autotile(offset); spawnBlob(map, "research",    offset); break;
 
+			case map_colors::crystal_glacial  :autotile(offset); spawnBlob(map, "crystalglacial",      offset, 0); break;
+			case map_colors::crystal_nebula   :autotile(offset); spawnBlob(map, "crystalnebula",       offset, 0); break;
+			case map_colors::crystal_celestial:autotile(offset); spawnBlob(map, "crystalcelestial",    offset, 0); break;
+			case map_colors::crystal_random   :
+			{
+				u8 rand =  XORRandom(100);
+				autotile(offset); spawnBlob(map, rand < 33 ? "crystalcelestial" : rand < 66 ? "crystalnebula" : "crystalglacial",    offset, 0);
+				break;
+			}
+
 			case map_colors::workbench:       autotile(offset); spawnBlob(map, "workbench",   offset, 255, true); break;
 			case map_colors::campfire:        autotile(offset); spawnBlob(map, "fireplace",   offset, 255); break;
 			case map_colors::saw:             autotile(offset); spawnBlob(map, "saw",         offset); break;
@@ -474,9 +484,9 @@ class PNGLoader
 		map.CreateSkyGradient("Sprites/skygradient.png"); // override sky color with gradient
 
 		// background
-		map.AddBackground("BackgroundPlains.png", Vec2f(0.0f, -40.0f), Vec2f(0.06f, 20.0f), color_white);
-		map.AddBackground("BackgroundTrees.png", Vec2f(0.0f,  -100.0f), Vec2f(0.18f, 70.0f), color_white);
-		map.AddBackground("BackgroundIsland.png", Vec2f(0.0f, -220.0f), Vec2f(0.3f, 180.0f), color_white);
+		map.AddBackground("BackgroundPlains.png", Vec2f(0.0f, -150.0f), Vec2f(0.06f, 20.0f), color_white);
+		map.AddBackground("BackgroundTrees.png", Vec2f(0.0f,  -350.0f), Vec2f(0.18f, 70.0f), color_white);
+		map.AddBackground("BackgroundIsland.png", Vec2f(0.0f, -350.0f), Vec2f(0.3f, 180.0f), color_white);
 
 		// fade in
 		SetScreenFlash(255,   0,   0,   0);

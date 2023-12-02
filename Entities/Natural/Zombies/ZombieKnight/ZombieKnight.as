@@ -173,10 +173,10 @@ void onTick(CBlob@ this)
 	if (this.getHealth()<0.0) return;
 	
 	float difficulty = getRules().get_f32("difficulty");
-	int break_chance = 30 - 2*(difficulty-1.0);	
-	if (break_chance<2) break_chance=2;
-	/*
-	if (getGameTime() % 30 == 0 && (XORRandom(break_chance)==0))
+	int break_chance = 20 - 2*(difficulty-1.0);
+		if (break_chance<3) break_chance=3;
+	
+	if (getGameTime() % 30 == 0 && (XORRandom(break_chance/4)==0))
 	{	
 		this.Tag(chomp_tag);
 		string name = this.getName();
@@ -188,15 +188,22 @@ void onTick(CBlob@ this)
 			CBlob@ other = blobs[step];
 			if (other is this) continue; //lets not run away from / try to eat ourselves...
 			if (other.hasTag("flesh")) continue;
-			if (other.getName() == "lantern" || other.getName() == "stone_door" || other.getName() == "wooden_door" || other.getName() == "wooden_platform"  || other.getName() == "GoldBrick" || other.getTeamNum()!=this.getTeamNum())
+
+			if (other.getName() == "stone_door" || other.getName() == "obstructor")
 			{
 				Vec2f vel(0,0);
-				this.server_Hit(other,other.getPosition(),vel,0.3,Hitters::saw, false);
+				this.server_Hit(other,other.getPosition(),vel,0.1,Hitters::builder, false);
+				break;				
+			}
+			if (other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getTeamNum()!=this.getTeamNum())
+			{
+				Vec2f vel(0,0);
+				this.server_Hit(other,other.getPosition(),vel,0.5,Hitters::builder, false);
 				break;				
 			}
 		}	
 	}
-	*/
+	
 	if (getNet().isServer() && this.hasTag(chomp_tag))
 	{
 		u16 lastbite = this.get_u16("lastbite");
@@ -304,7 +311,7 @@ void onTick(CBlob@ this)
 
 	// footsteps
 
-	if (this.isOnGround() && (this.isKeyPressed(key_left) || this.isKeyPressed(key_right)) )
+	if (this.isOnGround() || this.isOnWall())
 	{
 		if (XORRandom(break_chance)==0)
 		{
@@ -314,7 +321,7 @@ void onTick(CBlob@ this)
 			Vec2f tp = this.getPosition() + (dir)*(this.getRadius() + 4.0f);
 			TileType tile = this.getMap().getTile( tp ).type;
 			if ( !this.getMap().isTileGroundStuff( tile ) ) {		
-			this.getMap().server_DestroyTile(tp, 0.2);
+			this.getMap().server_DestroyTile(tp, 0.5);
 			}
 		}
 		if ((this.getNetworkID() + getGameTime()) % 9 == 0)
@@ -436,7 +443,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 			}
 			else
 			{
-				server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 50);
+				server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 25);
 			}
 		}
         this.server_Die();

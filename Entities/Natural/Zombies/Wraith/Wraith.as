@@ -370,7 +370,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 		{
 			CPlayer@ player = hitterBlob.getDamageOwnerPlayer();
 		}
-		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 50);
+		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 3);
 	}
 
 	MadAt( this, hitterBlob );

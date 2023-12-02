@@ -26,12 +26,12 @@ void onInit( CBlob@ this )
 
 	{
 		ShopItem@ s = addShopItem( this, "Oak tree seed", "$tree_bushy$", "tree_bushy", "Oak seed", false);
-		AddRequirement( s.requirements, "coin", "Oak seed", "Coins", 100 );
+		AddRequirement( s.requirements, "coin", "Oak seed", "Coins", 750 );
 		s.spawnNothing = true;
 	}
 	{	 
 		ShopItem@ s = addShopItem( this, "Pine tree seed", "$tree_pine$", "tree_pine", "Pine seed", false);
-		AddRequirement( s.requirements, "coin", "Pine seed", "Coins", 100 );
+		AddRequirement( s.requirements, "coin", "Pine seed", "Coins", 750 );
 		s.spawnNothing = true;
 	}
 	/*{

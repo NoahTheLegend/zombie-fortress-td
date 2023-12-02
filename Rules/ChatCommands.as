@@ -135,13 +135,11 @@ bool onServerProcessChat(CRules@ this, const string& in text_in, string& out tex
 					int team = parseInt(tokens[1]);
 					blob.server_setTeamNum(team);
 				}
-				else if (tokens[0]=="!team")
+				else if (tokens[0]=="!time") 
 				{
-					if (tokens.length<2) return false;
-					int team=parseInt(tokens[1]);
-					blob.server_setTeamNum(team);
-
-					player.server_setTeamNum(team); // Finally
+					if (tokens.length < 2) return false;
+					getMap().SetDayTime(parseFloat(tokens[1]));
+					return false;
 				}
 				else if (tokens[0]=="!playerteam")
 				{

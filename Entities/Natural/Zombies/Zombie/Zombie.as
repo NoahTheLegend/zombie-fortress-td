@@ -179,9 +179,9 @@ void onTick(CBlob@ this)
 	if (this.getHealth()<=0.0) return;
 
 	float difficulty = getRules().get_f32("difficulty");
-	int break_chance = 30 - 2*(difficulty-1.0);
+	int break_chance = 60 - 2*(difficulty-1.0);
 	if (break_chance<10) break_chance=10;
-	/*
+	
 	if (getGameTime() % 30 == 0 && (XORRandom(break_chance)==0))
 	{	
 		string name = this.getName();
@@ -193,18 +193,22 @@ void onTick(CBlob@ this)
 			CBlob@ other = blobs[step];
 			if (other is this) continue; //lets not run away from / try to eat ourselves...
 			if (other.hasTag("flesh")) continue;
-			if (other.getName() == "lantern" || other.getName() == "stone_door" || other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getName() == "GoldBrick" || other.getTeamNum()!=this.getTeamNum())
+
+			if (other.getName() == "stone_door" || other.getName() == "obstructor")
 			{
 				Vec2f vel(0,0);
-				if (other.getName() == "wooden_platform")
-				this.server_Hit(other,other.getPosition(),vel,1.0,Hitters::saw, false);
-				else
-				this.server_Hit(other,other.getPosition(),vel,0.2,Hitters::saw, false);
-				break;
+				this.server_Hit(other,other.getPosition(),vel,0.01,Hitters::builder, false);
+				break;				
+			}
+			if (other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getTeamNum()!=this.getTeamNum())
+			{
+				Vec2f vel(0,0);
+				this.server_Hit(other,other.getPosition(),vel,0.1,Hitters::builder, false);
+				break;				
 			}
 		}	
 	}
-	*/
+	
 	if (getNet().isServer() && this.hasTag(chomp_tag))
 	{
 		u16 lastbite = this.get_u16("lastbite");
@@ -313,7 +317,7 @@ void onTick(CBlob@ this)
 
 	// footsteps
 
-	if (this.isOnGround() && (this.isKeyPressed(key_left) || this.isKeyPressed(key_right)) )
+	if ((this.isOnGround() || this.isOnWall()) && (this.isKeyPressed(key_left) || this.isKeyPressed(key_right)) )
 	{
 	
 		if (XORRandom(break_chance)==0)
@@ -429,7 +433,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 			CPlayer@ player = hitterBlob.getDamageOwnerPlayer();
 			//player.server_setCoins( player.getCoins() + 10 );		
 		}
-		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 10);
+		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 3);
 		
         this.server_Die();
     }

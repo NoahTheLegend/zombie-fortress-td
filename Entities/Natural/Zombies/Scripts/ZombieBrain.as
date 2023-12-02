@@ -9,7 +9,7 @@
 void onInit( CBrain@ this )
 {
 	CBlob @blob = this.getBlob();
-	blob.set_u8( delay_property , 5+XORRandom(5));
+	blob.set_u8(delay_property , 5+XORRandom(5));
 	blob.set_u8(state_property, MODE_IDLE);
 
 	if (!blob.exists(terr_rad_property)) 
@@ -29,12 +29,12 @@ void onInit( CBrain@ this )
 
 	if (!blob.exists(target_lose_random))
 	{
-		blob.set_u8(target_lose_random,14);
+		blob.set_u8(target_lose_random,150);
 	}
 
 	if (!blob.exists("random move freq"))
 	{
-		blob.set_u8("random move freq",2);
+		blob.set_u8("random move freq",6);
 	}	
 
 	if (!blob.exists("target dist"))
@@ -256,7 +256,7 @@ void onTick( CBrain@ this )
 										//if (XORRandom(8) == 0) 
 										{ 
 											//if (XORRandom(10) == 0)
-											if (isVisible(blob,other)|| (XORRandom(8) == 0))
+											if (isVisible(blob,other) || blob.hasTag("crystal") || (XORRandom(8) == 0))
 											{
 												mode = MODE_TARGET;
 												blob.set_netid(target_property,other.getNetworkID());
