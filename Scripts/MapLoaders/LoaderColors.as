@@ -176,6 +176,7 @@ namespace map_colors
 		crystal_nebula		   = 0xFFad88db,
 		crystal_celestial      = 0xFF213a73,
 		crystal_random         = 0xFFc34097,
+		gravel                 = 0xFF8Baa49, // ARGB(255, 139,  170,  73);
 
 		// MARKERS
 		blue_main_spawn        = 0xFF00FFFF, // ARGB(255,   0, 255, 255);

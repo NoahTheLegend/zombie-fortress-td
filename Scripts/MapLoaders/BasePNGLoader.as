@@ -279,6 +279,7 @@ class PNGLoader
 				autotile(offset); spawnBlob(map, rand < 33 ? "crystalcelestial" : rand < 66 ? "crystalnebula" : "crystalglacial",    offset, 1);
 				break;
 			}
+			case map_colors::gravel: autotile(offset); spawnBlob(map, "gravel", offset, 255); break;
 
 			case map_colors::workbench:       autotile(offset); spawnBlob(map, "workbench",   offset, 255, true); break;
 			case map_colors::campfire:        autotile(offset); spawnBlob(map, "fireplace",   offset, 255); break;
