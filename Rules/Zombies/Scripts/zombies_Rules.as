@@ -102,8 +102,10 @@ shared class ZombiesSpawns : RespawnSystem
 			u8 spawn_property = 255;
 			
 			if(info.can_spawn_time > 0) {
+				f32 daytime = getMap().getDayTime();
+				if (daytime>0.2f&&daytime<0.75f) info.can_spawn_time = Maths::Min(30*30, info.can_spawn_time);
 				info.can_spawn_time--;
-				spawn_property = u8(Maths::Min(250,(info.can_spawn_time / 30)));
+				spawn_property = u8(info.can_spawn_time / 30);
 			}
 			
 			string propname = "Zombies spawn time "+info.username;
@@ -162,7 +164,7 @@ shared class ZombiesSpawns : RespawnSystem
             }
             if (player.getTeamNum() != int(p_info.team))
             {
-				player.server_setTeamNum(p_info.team);
+				player.server_setTeamNum(1);
 				warn("team"+p_info.team);
 			}
 
@@ -183,8 +185,8 @@ shared class ZombiesSpawns : RespawnSystem
                 RemovePlayerFromSpawn(player);
 
 				// spawn resources
-				SetMaterials( playerBlob, "mat_wood", 100 );
-				SetMaterials( playerBlob, "mat_stone", 50 );
+				SetMaterials( playerBlob, "mat_wood", 250 );
+				SetMaterials( playerBlob, "mat_stone", 100 );
             }
         }
     }
@@ -270,12 +272,13 @@ shared class ZombiesSpawns : RespawnSystem
 			int gamestart = getRules().get_s32("gamestart");
 			int day_cycle = getRules().daycycle_speed*60;
 			int timeElapsed = ((getGameTime()-gamestart)/getTicksASecond()) % day_cycle;
-			tickspawndelay = (day_cycle - timeElapsed)*getTicksASecond();
-			//warn("DC: "+day_cycle+" TE:"+timeElapsed);
-			if (timeElapsed<120) tickspawndelay=0;
+
+			f32 daytime = getMap().getDayTime();
+			tickspawndelay = daytime>0.2f&&daytime<0.75f?30*30:180*30;
+			warn("DC: "+day_cycle+" TE:"+timeElapsed+" TD:"+tickspawndelay);
+			if (timeElapsed<10) tickspawndelay=0;
 		}
-		
-		
+	
 		//; //
         
         CTFPlayerInfo@ info = cast<CTFPlayerInfo@>(core.getInfoFromPlayer(player));
@@ -365,11 +368,11 @@ shared class ZombiesCore : RulesCore
 		rules.set_f32("difficulty",difficulty/3.0);
 		int intdif = difficulty;
 		if (intdif<=0) intdif=1;
-		int spawnRate = getTicksASecond() * Maths::Max(1, (6-(difficulty)));
+		int spawnRate = getTicksASecond() * Maths::Max(1, (6-(difficulty)))/2;
 		int extra_zombies = 0;
 		if (dayNumber > 10) extra_zombies=(dayNumber-10)*10;
 		if (extra_zombies>max_zombies-10) extra_zombies=max_zombies-10;
-		if (spawnRate<8) spawnRate=8;
+		if (spawnRate<5) spawnRate=5;
 		int wraiteRate = 2 + (intdif/4);
 		if (getGameTime() % 300 == 0)
 		{

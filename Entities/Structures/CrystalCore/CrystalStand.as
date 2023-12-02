@@ -1,3 +1,11 @@
+#include "Requirements.as"
+#include "ShopCommon.as"
+#include "Descriptions.as"
+#include "Costs.as"
+#include "CheckSpam.as"
+#include "GenericButtonCommon.as"
+#include "TeamIconToken.as"
+
 void onInit(CBlob@ this)
 {
     CShape@ shape = this.getShape();
@@ -14,9 +22,21 @@ void onInit(CBlob@ this)
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f(0, 0));
-	this.set_Vec2f("shop menu size", Vec2f(2,2));	
+	this.set_Vec2f("shop menu size", Vec2f(4,2));	
 	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 12);
+	{
+		ShopItem@ s = addShopItem(this, "Wood", "$mat_wood$", "mat_wood", "Transform coins into wood planks.", false);
+		AddRequirement(s.requirements, "coin", "", "Coins", 50);
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Stone", "$mat_stone$", "mat_stone", "Transform coins rocks.", false);
+		AddRequirement(s.requirements, "coin", "", "Coins", 50);
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Gold", "$mat_gold$", "mat_gold", "Transform coins into gold ingots.", false);
+		AddRequirement(s.requirements, "coin", "", "Coins", 250);
+	}
 }
 
 void GetButtonsFor(CBlob@ this, CBlob@ caller)

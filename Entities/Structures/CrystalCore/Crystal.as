@@ -4,6 +4,10 @@ const f32 light_radius = 200.0f;
 
 void onInit(CBlob@ this)
 {
+    // CLASS
+	this.set_Vec2f("class offset", Vec2f(0, 16));
+	this.set_string("required class", "builder");
+
     CShape@ shape = this.getShape();
 	ShapeConsts@ consts = shape.getConsts();
 	consts.mapCollisions = false;

@@ -270,13 +270,13 @@ class PNGLoader
 			case map_colors::nursery:         autotile(offset); spawnBlob(map, "nursery",     offset); break;
 			case map_colors::research:        autotile(offset); spawnBlob(map, "research",    offset); break;
 
-			case map_colors::crystal_glacial  :autotile(offset); spawnBlob(map, "crystalglacial",      offset, 0); break;
-			case map_colors::crystal_nebula   :autotile(offset); spawnBlob(map, "crystalnebula",       offset, 0); break;
-			case map_colors::crystal_celestial:autotile(offset); spawnBlob(map, "crystalcelestial",    offset, 0); break;
-			case map_colors::crystal_random   :
+			case map_colors::crystal_glacial  :autotile(offset); spawnBlob(map, "crystalglacial",      offset, 1); break;
+			case map_colors::crystal_nebula   :autotile(offset); spawnBlob(map, "crystalnebula",       offset, 1); break;
+			case map_colors::crystal_celestial:autotile(offset); spawnBlob(map, "crystalcelestial",    offset, 1); break;
+			case map_colors::crystal_random:
 			{
 				u8 rand =  XORRandom(100);
-				autotile(offset); spawnBlob(map, rand < 33 ? "crystalcelestial" : rand < 66 ? "crystalnebula" : "crystalglacial",    offset, 0);
+				autotile(offset); spawnBlob(map, rand < 33 ? "crystalcelestial" : rand < 66 ? "crystalnebula" : "crystalglacial",    offset, 1);
 				break;
 			}
 
