@@ -6,9 +6,9 @@ SColor getTeamColor(int team)
 	{
 		case 0: teamCol.set(0xff2cafde); break;
 
-		case 2: teamCol.set(0xffd5543f); break;
+		case 1: teamCol.set(0xffd5543f); break;
 
-		case 1: teamCol.set(0xff9dca22); break;
+		case 2: teamCol.set(0xff9dca22); break;
 
 		case 3: teamCol.set(0xffd379e0); break;
 

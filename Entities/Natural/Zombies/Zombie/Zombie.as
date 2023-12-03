@@ -179,7 +179,7 @@ void onTick(CBlob@ this)
 	if (this.getHealth()<=0.0) return;
 
 	float difficulty = getRules().get_f32("difficulty");
-	int break_chance = 60 - 2*(difficulty-1.0);
+	int break_chance = 45 - 2*(difficulty-1.0);
 	if (break_chance<10) break_chance=10;
 	
 	if (getGameTime() % 30 == 0 && (XORRandom(break_chance)==0))
@@ -197,13 +197,13 @@ void onTick(CBlob@ this)
 			if (other.getName() == "stone_door" || other.getName() == "obstructor")
 			{
 				Vec2f vel(0,0);
-				this.server_Hit(other,other.getPosition(),vel,0.01,Hitters::builder, false);
+				this.server_Hit(other,other.getPosition(),vel,0.05,Hitters::builder, false);
 				break;				
 			}
 			if (other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getTeamNum()!=this.getTeamNum())
 			{
 				Vec2f vel(0,0);
-				this.server_Hit(other,other.getPosition(),vel,0.1,Hitters::builder, false);
+				this.server_Hit(other,other.getPosition(),vel,0.3,Hitters::builder, false);
 				break;				
 			}
 		}	

@@ -29,7 +29,7 @@ void onInit( CBrain@ this )
 
 	if (!blob.exists(target_lose_random))
 	{
-		blob.set_u8(target_lose_random,150);
+		blob.set_u8(target_lose_random,180);
 	}
 
 	if (!blob.exists("random move freq"))
@@ -71,7 +71,7 @@ void onTick( CBrain@ this )
 		{
 			CBlob@ target = getBlobByNetworkID(blob.get_netid(target_property));
 			
-			if (target is null ||  XORRandom( blob.get_u8(target_lose_random) ) == 0)
+			if (target is null || (XORRandom(blob.get_u8(target_lose_random) ) == 0 && !target.hasTag("crystal")))
 			{
 				blob.set_u8(state_property,MODE_IDLE);
 			}

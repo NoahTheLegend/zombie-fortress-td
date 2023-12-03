@@ -328,7 +328,6 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 	
 	//printf("ON HIT " + damage + " he " + this.getHealth() + " g " + gibHealth );
     // blob server_Die()() and then gib
-	warn("arm hit "+damage);
 	
 	//printf("gibHealth " + gibHealth + " health " + this.getHealth() );
     if (this.getHealth() <= gibHealth)

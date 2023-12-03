@@ -86,12 +86,6 @@ float drawScoreboard(CPlayer@ localplayer, CPlayer@[] players, Vec2f topleft, CT
 	const int age_start = accolades_start + 80;
 
 	draw_age = false;
-	for(int i = 0; i < players.length; i++) {
-		if (players[i].getRegistrationTime() > 0) {
-			draw_age = true;
-			break;
-		}
-	}
 
 	draw_tier = false;
 	for(int i = 0; i < players.length; i++) {

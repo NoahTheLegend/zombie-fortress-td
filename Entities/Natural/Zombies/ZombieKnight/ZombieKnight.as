@@ -192,7 +192,7 @@ void onTick(CBlob@ this)
 			if (other.getName() == "stone_door" || other.getName() == "obstructor")
 			{
 				Vec2f vel(0,0);
-				this.server_Hit(other,other.getPosition(),vel,0.1,Hitters::builder, false);
+				this.server_Hit(other,other.getPosition(),vel,0.15,Hitters::builder, false);
 				break;				
 			}
 			if (other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getTeamNum()!=this.getTeamNum())

@@ -424,7 +424,7 @@ shared class ZombiesCore : RulesCore
 					//zombiePlaces.push_back(Vec2f((map.tilemapwidth-8)*4,(map.tilemapheight/2)*8));
 				}
 				//if (map.getDayTime()>0.1 && map.getDayTime()<0.2)
-				if (map.getDayTime() > 0.85 || map.getDayTime()<0.1)
+				if (map.getDayTime() > 0.8f || map.getDayTime() < 0.15)
 				{
 					//Vec2f sp(XORRandom(4)*(map.tilemapwidth/4)*8+(90*8),(map.tilemapheight/2)*8);
 					
@@ -432,7 +432,7 @@ shared class ZombiesCore : RulesCore
 					
 					string[] names = {"Skeleton", "Zombie", "ZombieArm", "ZombieKnight", "Greg", "Wraith"};
 					int[]    weights={25,         125,       50,          500,            150,   250};
-					int[]    probs  ={33,         50,        25,          10,             10,     15};
+					int[]    probs  ={33,         33,        25,          15,             10,     20};
 
 					int pool = int(rules.get_f32("pool"));
 
@@ -444,6 +444,11 @@ shared class ZombiesCore : RulesCore
 							if (XORRandom(100) < probs[i])
 							{
 								Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
+								if (names[i] == "Greg" || names[i] == "Wraith")
+								{
+									sp = Vec2f(XORRandom(map.tilemapwidth*8.0f),16+XORRandom(49));
+								}
+								
 								server_CreateBlob(names[i], -1, sp);
 								rules.add_f32("pool", -weights[i]);
 

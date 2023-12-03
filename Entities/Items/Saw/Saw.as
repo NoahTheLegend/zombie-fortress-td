@@ -140,10 +140,10 @@ void Blend( CBlob@ this, CBlob@ tobeblended )
 
 }
 
-
 bool canSaw(CBlob@ this, CBlob@ blob)
 {
 	if(blob.hasTag("saw")) return true; //destroy saws in close proximity
+	if (blob.hasTag("zombie") || blob.hasTag("player")) return false;
 
 	if (blob.getRadius() >= this.getRadius()*0.99f || blob.getShape().isStatic() ||
 		blob.hasTag("sawed") || blob.hasTag("invincible")) {
@@ -217,7 +217,7 @@ void onCollision( CBlob@ this, CBlob@ blob, bool solid )
 	{
 		return;
 	}
-
+	
 	if(canSaw(this,blob))
 	{
 		Vec2f pos = this.getPosition();

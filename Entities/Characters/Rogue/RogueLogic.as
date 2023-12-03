@@ -143,7 +143,7 @@ void onTick(CBlob@ this)
 		{
 			Sound::Play("/Stun", pos, 1.0f, this.getSexNum() == 0 ? 1.5f : 2.0f);
 			SetKnocked(this, 20);
-			this.setVelocity(vel * 1.5f);
+			this.setVelocity(vel * 1.6f);
 		}
 
 	}

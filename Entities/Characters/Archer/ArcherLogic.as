@@ -74,7 +74,7 @@ void ManageGrapple(CBlob@ this, ArcherInfo@ archer)
 		{
 			Sound::Play("/Stun", pos, 1.0f, this.getSexNum() == 0 ? 1.0f : 2.0f);
 			SetKnocked(this, 22);
-			this.setVelocity(vel * 1.65);
+			this.setVelocity(vel * 1.6);
 		}
 
 		// cancel charging
@@ -363,7 +363,7 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 	}
 	else if (this.isKeyPressed(key_action1))
 	{
-		moveVars.walkFactor *= 0.80f;
+		moveVars.walkFactor *= 0.6f;
 		moveVars.canVault = false;
 
 		const bool just_action1 = this.isKeyJustPressed(key_action1);
