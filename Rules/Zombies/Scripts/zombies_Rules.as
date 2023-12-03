@@ -432,7 +432,7 @@ shared class ZombiesCore : RulesCore
 					
 					string[] names = {"Skeleton", "Zombie", "ZombieArm", "ZombieKnight", "Greg", "Wraith"};
 					int[]    weights={25,         125,       50,          500,            150,   250};
-					int[]    probs  ={33,         33,        25,          15,             10,     20};
+					int[]    probs  ={33,         33,        25,          15,             10,     15};
 
 					int pool = int(rules.get_f32("pool"));
 

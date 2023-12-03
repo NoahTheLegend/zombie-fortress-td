@@ -6,6 +6,7 @@
 const u8 DEFAULT_PERSONALITY = AGGRO_BIT;
 const s16 MAD_TIME = 600;
 const string chomp_tag = "chomping";
+#include "Hitters.as";
 
 //sprite
 
@@ -394,9 +395,19 @@ f32 getGibHealth( CBlob@ this )
     return 0.0f;
 }
 
+bool isBoulderHitter(u8 data)
+{
+	return data == Hitters::boulder || data == Hitters::crush || data == Hitters::cata_boulder || data == Hitters::cata_stones;
+}
+
 f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
 {		
 	MadAt( this, hitterBlob );
+
+	if (isExplosionHitter(customData) || isBoulderHitter(customData))
+	{
+		damage = damage + (damage * getPlayersCount()/15);
+	}
 
 	if (this.getHealth()>0 && this.getHealth() <= damage)
 	{

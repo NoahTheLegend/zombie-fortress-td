@@ -179,14 +179,14 @@ void onTick(CBlob@ this)
 		CBlob@ projectile = server_CreateBlob("boulder",-1,this.getPosition()+Vec2f((this.isFacingLeft() ? -8 : 8),-4));
 		makeSmokeParticle(this.getPosition() + getRandomVelocity(90.0f, 3.0f, 360.0f));
 
-		SetKnocked(this, 41);
+		SetKnocked(this, 45);
 
 		Sound::Play("CatapultFire", this.getPosition());
 		Sound::Play("/ArgLong", this.getPosition());
 
 		if(projectile !is null)
 		{
-			Vec2f vel((this.isFacingLeft() ? -7.0f : 7.0f), -4.5f);
+			Vec2f vel((this.isFacingLeft() ? -8.0f : 8.0f), -3.0f);
 			projectile.setVelocity(vel * 1.2);
 			projectile.server_SetTimeToDie(2.0f);
 			projectile.server_setTeamNum(this.getTeamNum());

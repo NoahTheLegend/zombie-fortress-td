@@ -5,6 +5,7 @@
 //#include "Descriptions.as";
 //#include "WARCosts.as";
 //#include "CheckSpam.as";
+#include "Hitters.as";
 
 void onInit( CBlob@ this )
 {	 
@@ -28,6 +29,9 @@ void onInit( CBlob@ this )
 	this.set_bool("portalplaybreach",false);
 	this.SetLight(false);
 	this.SetLightRadius( 64.0f );
+
+	this.Tag("builder always hit");
+	this.Tag("builder urgent hit");
 	
 	this.SetMinimapVars("mipmip.png", 2, Vec2f(16, 8));
 	this.SetMinimapRenderAlways(true);
@@ -91,8 +95,17 @@ void onTick( CBlob@ this)
 		if ((getGameTime() % spawnRate == 0) && num_zombies < 100)
 		{
 		CBlob@[] blobs;
-		getMap().getBlobsInRadius( this.getPosition(), 250, @blobs );
+		getMap().getBlobsInRadius( this.getPosition(), 256, @blobs );
 		if (blobs.length == 0) return;
+
+		CBlob@[] zambies;
+		getMap().getBlobsInRadius( this.getPosition(), 128, @zambies );
+		int zombies = 0;
+		for (u16 i = 0; i < zambies.length; i++)
+		{
+			if (zambies[i] !is null && zambies[i].hasTag("zombie")) zombies++;
+		}
+		if (zombies > 16) return;
 		
 			Vec2f sp = this.getPosition();
 			
@@ -148,3 +161,27 @@ void GetButtonsFor( CBlob@ this, CBlob@ caller )
 //	this.set_bool("shop available", this.isOverlapping(caller) /*&& caller.getName() == "builder"*/ );
 }
 							   
+f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
+{
+	if (customData == Hitters::cata_stones)
+	{
+		damage *= 0.05f;
+	}
+
+	if (customData == Hitters::explosion)
+	{
+		damage *= 4;
+	}
+	
+	if (customData == Hitters::keg)
+	{
+		damage *= 2;
+	}
+
+	if (customData == Hitters::builder)
+	{
+		damage *= 0.75f;
+	}
+
+	return damage;
+}
