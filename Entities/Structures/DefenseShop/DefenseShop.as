@@ -31,7 +31,7 @@ void onInit( CBlob@ this )
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Water Bomb", "$waterbomb$", "mat_waterbombs", "A bottle with water.", true);
-		AddRequirement(s.requirements, "coin", "", "Denars", 10);
+		AddRequirement(s.requirements, "coin", "", "Denars", 5);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Mine", getTeamIcon("mine", "Mine.png", 0, Vec2f(16, 16), 1), "mine", "Instant mine.", false);

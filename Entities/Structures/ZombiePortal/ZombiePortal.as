@@ -29,9 +29,6 @@ void onInit( CBlob@ this )
 	this.set_bool("portalplaybreach",false);
 	this.SetLight(false);
 	this.SetLightRadius( 64.0f );
-
-	this.Tag("builder always hit");
-	this.Tag("builder urgent hit");
 	
 	this.SetMinimapVars("mipmip.png", 2, Vec2f(16, 8));
 	this.SetMinimapRenderAlways(true);
@@ -39,7 +36,7 @@ void onInit( CBlob@ this )
 
 void onDie(CBlob@ this)
 {
-	server_DropCoins(this.getPosition() + Vec2f(0,-32.0f), 1000);
+	server_DropCoins(this.getPosition() + Vec2f(0,-32.0f), 100);
 
 	CBlob@[] portals;
 	getBlobsByName("ZombiePortal", @portals);
@@ -55,12 +52,13 @@ void onDie(CBlob@ this)
 		if (teamis !is null)
 		{
 			getRules().SetGlobalMessage(teamis.getName() + ", you've destroyed all portals, congratulations!");
-			CBlob@[] zombies;
-			getBlobsByTag("zombie", @zombies);
-			for (u16 i = 0; i < zombies.length; i++)
-			{
-				if (zombies[i] !is null) zombies[i].server_Die();
-			}
+		}
+
+		CBlob@[] zombies;
+		getBlobsByTag("zombie", @zombies);
+		for (u16 i = 0; i < zombies.length; i++)
+		{
+			if (zombies[i] !is null) zombies[i].server_Die();
 		}
 	}
 }
@@ -181,6 +179,25 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 	if (customData == Hitters::builder)
 	{
 		damage *= 0.75f;
+	}
+
+	Vec2f sp = this.getPosition();
+	
+	if (!this.get_bool("portalbreach") && XORRandom(8) == 0)
+	{
+		CBlob@[] blobs;
+		this.getMap().getBlobsInRadius( sp, 64, @blobs );
+		for (uint step = 0; step < blobs.length; ++step)
+		{
+			CBlob@ other = blobs[step];
+			if (other.hasTag("player"))
+			{
+				this.set_bool("portalbreach",true);
+				this.set_bool("portalplaybreach",true);
+				this.Sync("portalplaybreach",true);
+				this.Sync("portalbreach",true);
+			}
+		}
 	}
 
 	return damage;

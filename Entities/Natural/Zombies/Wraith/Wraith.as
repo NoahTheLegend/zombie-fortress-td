@@ -129,11 +129,11 @@ void onInit(CBlob@ this)
 	
 //    this.Tag("bomberman_style");
 //	this.set_f32("map_bomberman_width", 24.0f);
-    this.set_f32("explosive_radius", 96.0f);
+    this.set_f32("explosive_radius", 80.0f);
     this.set_f32("explosive_damage",10.0f);
     this.set_u8("custom_hitter", Hitters::bomb);
     this.set_string("custom_explosion_sound", "Entities/Items/Explosives/KegExplosion.ogg");
-    this.set_f32("map_damage_radius", 64.0f);
+    this.set_f32("map_damage_radius", 32.0f);
     this.set_f32("map_damage_ratio", 0.5f);
     this.set_bool("map_damage_raycast", true);
 	this.set_f32("keg_time", 120.0f);  // 180.0f
@@ -381,7 +381,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 		{
 			CPlayer@ player = hitterBlob.getDamageOwnerPlayer();
 		}
-		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 3);
+		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 10);
 	}
 
 	MadAt( this, hitterBlob );
@@ -439,9 +439,9 @@ void onDie(CBlob@ this)
 		killer.setKills(killer.getKills() + 1);
 	}
 	
-	this.Tag("activated");
-	this.set_s32("explosion_timer", getGameTime() + this.get_f32("keg_time"));
-	this.Tag("exploding");				
+	//this.Tag("activated");
+	//this.set_s32("explosion_timer", getGameTime() + this.get_f32("keg_time"));
+	//this.Tag("exploding");				
 }
 
 void onHitBlob( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData )

@@ -9,7 +9,7 @@
 #include "zombies_Technology.as";
 
 const int base_pool = 1500;
-const int day_pool = 200;
+const int day_pool = 100;
 
 //simple config function - edit the variables below to change the basics
 
@@ -285,7 +285,7 @@ shared class ZombiesSpawns : RespawnSystem
 			int timeElapsed = ((getGameTime()-gamestart)/getTicksASecond()) % day_cycle;
 
 			f32 daytime = getMap().getDayTime();
-			tickspawndelay = daytime>0.2f&&daytime<0.75f?30*30:180*30;
+			tickspawndelay = daytime>0.2f&&daytime<0.75f?30*30:120*30;
 			warn("DC: "+day_cycle+" TE:"+timeElapsed+" TD:"+tickspawndelay);
 			if (timeElapsed<10) tickspawndelay=0;
 		}
@@ -379,10 +379,10 @@ shared class ZombiesCore : RulesCore
 		}
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) { rules.SetCurrentState(GAME);}
-		rules.set_f32("difficulty",difficulty/3.0);
+		rules.set_f32("difficulty", Maths::Clamp(difficulty, 0.25f, 3.0f)); // change some time later
 		int intdif = difficulty;
 		if (intdif<=0) intdif=1;
-		int spawnRate = 300/((dayNumber+1)/2); /////////////
+		int spawnRate = 300/((dayNumber+1)/2);
 		int extra_zombies = 0;
 		if (dayNumber > 10) extra_zombies=(dayNumber-10)*10;
 		if (extra_zombies>max_zombies-10) extra_zombies=max_zombies-10;
@@ -431,8 +431,8 @@ shared class ZombiesCore : RulesCore
 					Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
 					
 					string[] names = {"Skeleton", "Zombie", "ZombieArm", "ZombieKnight", "Greg", "Wraith"};
-					int[]    weights={25,         125,       50,          500,            150,   250};
-					int[]    probs  ={33,         33,        25,          15,             10,     15};
+					int[]    weights={25,         125,       50,          500,            150,   200};
+					int[]    probs  ={33,         33,        25,          15,             5,     15};
 
 					int pool = int(rules.get_f32("pool"));
 

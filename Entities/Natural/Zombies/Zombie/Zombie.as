@@ -204,7 +204,7 @@ void onTick(CBlob@ this)
 			if (other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getTeamNum()!=this.getTeamNum())
 			{
 				Vec2f vel(0,0);
-				this.server_Hit(other,other.getPosition(),vel,0.3,Hitters::builder, false);
+				this.server_Hit(other,other.getPosition(),vel,0.33f,Hitters::builder, false);
 				break;				
 			}
 		}	
@@ -444,7 +444,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 			CPlayer@ player = hitterBlob.getDamageOwnerPlayer();
 			//player.server_setCoins( player.getCoins() + 10 );		
 		}
-		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 3);
+		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 8);
 		
         this.server_Die();
     }

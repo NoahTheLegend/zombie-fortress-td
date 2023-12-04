@@ -23,11 +23,11 @@ void onInit(CBlob@ this)
 {
 	CritterVars vars;
 	//walking vars
-	vars.walkForce.Set(15.0f,0.0f);
-	vars.runForce.Set(15.0f,0.0f);
+	vars.walkForce.Set(13.5f,0.0f);
+	vars.runForce.Set(13.5f,0.0f);
 	vars.slowForce.Set(5.5f,0.0f);
-	vars.jumpForce.Set(0.0f,-34.0f);
-	vars.maxVelocity = 3.0f;
+	vars.jumpForce.Set(0.0f,-30.0f);
+	vars.maxVelocity = 2.5f;
 	this.set( "vars", vars );
 	this.set_s32("flymod",0);
 	// force no team

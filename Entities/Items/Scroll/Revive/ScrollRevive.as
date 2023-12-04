@@ -33,6 +33,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		for (u8 i = 0; i < getPlayersCount(); i++)
 		{
 			if (remaining_uses == 0) break;
+			remaining_uses--;
 
 			CPlayer@ p = getPlayer(i);
 			if (p is null || p.getBlob() !is null) continue;

@@ -199,7 +199,7 @@ void onTick(CBlob@ this)
 			if (other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getTeamNum()!=this.getTeamNum())
 			{
 				Vec2f vel(0,0);
-				this.server_Hit(other,other.getPosition(),vel,0.5,Hitters::builder, false);
+				this.server_Hit(other,other.getPosition(),vel,0.75f,Hitters::builder, false);
 				break;				
 			}
 		}	

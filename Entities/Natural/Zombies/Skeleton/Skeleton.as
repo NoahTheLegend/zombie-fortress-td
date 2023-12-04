@@ -384,7 +384,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 			CPlayer@ player = hitterBlob.getDamageOwnerPlayer();
 			//player.server_setCoins( player.getCoins() + 10 );		
 		}
-		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 1);
+		server_DropCoins(hitterBlob.getPosition() + Vec2f(0,-3.0f), 3);
 		
 	}
 	if (customData == Hitters::arrow) damage*=2.0;
