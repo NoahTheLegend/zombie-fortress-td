@@ -26,9 +26,9 @@ namespace ArcherParams
 
 	const ::s32 legolas_charge_time = 5;
 	const ::s32 legolas_arrows_count = 1;
-	const ::s32 legolas_arrows_volley = 3;
+	const ::s32 legolas_arrows_volley = 5;
 	const ::s32 legolas_arrows_deviation = 1;
-	const ::s32 legolas_time = 58;
+	const ::s32 legolas_time = 45;
 }
 
 //TODO: move vars into archer params namespace
