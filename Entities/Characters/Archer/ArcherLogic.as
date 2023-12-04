@@ -812,6 +812,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 
 		if (legolas)
 		{
+			this.TakeBlob(arrowTypeNames[ arrowType ], 1);
 			int r = 0;
 			for (int i = 0; i < ArcherParams::legolas_arrows_volley; i++)
 			{
@@ -823,7 +824,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 						arrow.Tag("shotgunned");
 					}
 				}
-				this.TakeBlob(arrowTypeNames[ arrowType ], 1);
+				
 				arrowType = ArrowType::normal;
 
 				//don't keep firing if we're out of arrows

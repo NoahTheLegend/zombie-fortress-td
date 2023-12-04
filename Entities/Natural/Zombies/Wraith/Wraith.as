@@ -158,19 +158,19 @@ void onTick(CBlob@ this)
 {
 	if (this.hasTag("activated"))
 	{
-	this.SetLight( true );
-	this.SetLightRadius( 24.0f );
-	this.SetLightColor( SColor(255, 211, 121, 224 ) );
-	
-	s32 timer = this.get_s32("explosion_timer") - getGameTime();
-	
-	if (timer <= 0)
-	{
-		if (getNet().isServer()) {
-			this.server_SetHealth(-1.0f);
-			this.server_Die();				
+		this.SetLight( true );
+		this.SetLightRadius( 24.0f );
+		this.SetLightColor( SColor(255, 211, 121, 224 ) );
+		
+		s32 timer = this.get_s32("explosion_timer") - getGameTime();
+		
+		if (timer <= 0)
+		{
+			if (getNet().isServer()) {
+				this.server_SetHealth(-1.0f);
+				this.server_Die();				
+			}
 		}
-	}
 	}	
 	f32 x = this.getVelocity().x;
 	if (this.hasAttached())
@@ -195,7 +195,7 @@ void onTick(CBlob@ this)
 		}
 	}
 	
-	if (getGameTime() % 5 == 0 && (XORRandom(20)==0))
+	if (getGameTime() % 5 == 0 && (XORRandom(25)==0))
 	{	
 		string name = this.getName();
 		CBlob@[] blobs;
