@@ -33,7 +33,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		for (u8 i = 0; i < getPlayersCount(); i++)
 		{
 			if (remaining_uses == 0) break;
-			remaining_uses--;
 
 			CPlayer@ p = getPlayer(i);
 			if (p is null || p.getBlob() !is null) continue;
@@ -43,6 +42,8 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			ShakeScreen(48, 24, this.getPosition());
 			
 			acted = true;
+			remaining_uses--;
+			
 			if (isServer())
 			{
 				CBlob@ b = server_CreateBlob(XORRandom(2)==0?"knight":"flail", 1, this.getPosition());
