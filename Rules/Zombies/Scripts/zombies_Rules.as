@@ -382,7 +382,7 @@ shared class ZombiesCore : RulesCore
 		rules.set_f32("difficulty", Maths::Clamp(difficulty, 0.25f, 3.0f)); // change some time later
 		int intdif = difficulty;
 		if (intdif<=0) intdif=1;
-		int spawnRate = 300/((dayNumber+1)/2);
+		int spawnRate = 240/((dayNumber+1)/2);
 		int extra_zombies = 0;
 		if (dayNumber > 10) extra_zombies=(dayNumber-10)*10;
 		if (extra_zombies>max_zombies-10) extra_zombies=max_zombies-10;
