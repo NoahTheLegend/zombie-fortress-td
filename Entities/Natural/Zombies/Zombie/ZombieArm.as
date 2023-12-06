@@ -329,7 +329,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 
 	if (isExplosionHitter(customData) || isBoulderHitter(customData))
 	{
-		damage = damage + (damage * getPlayersCount()/15);
+		damage = damage + (damage * getPlayersCount()/10);
 	}
 
 	if (customData == Hitters::arrow) damage*=2.0;
