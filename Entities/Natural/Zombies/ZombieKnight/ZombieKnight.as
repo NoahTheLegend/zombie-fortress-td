@@ -174,10 +174,10 @@ void onTick(CBlob@ this)
 	if (this.getHealth()<0.0) return;
 	
 	float difficulty = getRules().get_f32("difficulty");
-	int break_chance = 20 - 2*(difficulty-1.0);
-		if (break_chance<3) break_chance=3;
+	int break_chance = 5 - 2*(difficulty-1.0);
+		if (break_chance<2) break_chance=2;
 	
-	if (getGameTime() % 30 == 0 && (XORRandom(break_chance/4)==0))
+	if (getGameTime() % 30 == 0 && (XORRandom(break_chance)==0))
 	{	
 		this.Tag(chomp_tag);
 		string name = this.getName();
@@ -199,7 +199,7 @@ void onTick(CBlob@ this)
 			if (other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getTeamNum()!=this.getTeamNum())
 			{
 				Vec2f vel(0,0);
-				this.server_Hit(other,other.getPosition(),vel,0.75f,Hitters::builder, false);
+				this.server_Hit(other,other.getPosition(),vel,1.0f,Hitters::builder, false);
 				break;				
 			}
 		}	
