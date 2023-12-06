@@ -379,7 +379,7 @@ shared class ZombiesCore : RulesCore
 		}
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) { rules.SetCurrentState(GAME);}
-		rules.set_f32("difficulty", Maths::Clamp(difficulty, 1.0f, 4.0f)); // change some time later
+		rules.set_f32("difficulty", Maths::Clamp(difficulty, 1.5f, 4.0f)); // change some time later
 		int intdif = difficulty;
 		if (intdif<=0) intdif=1;
 		int spawnRate = 240/((dayNumber+1)/2);
