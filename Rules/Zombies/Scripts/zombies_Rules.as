@@ -111,7 +111,7 @@ shared class ZombiesSpawns : RespawnSystem
 
 			if(info.can_spawn_time > 0) {
 				f32 daytime = getMap().getDayTime();
-				if (daytime>0.2f&&daytime<0.75f) info.can_spawn_time = Maths::Min(30*30, info.can_spawn_time);
+				if (daytime>0.2f&&daytime<0.75f) info.can_spawn_time = Maths::Min(60*30, info.can_spawn_time);
 				info.can_spawn_time--;
 				spawn_property = u8(info.can_spawn_time / 30);
 			}
