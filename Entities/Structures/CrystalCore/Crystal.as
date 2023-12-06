@@ -118,7 +118,10 @@ void onTick(CBlob@ this)
 		    	image.setPixelOffset(this.get_u32("light_breakpoint") + shiny.frame*48);
                 SColor color = image.readPixel();
                 this.SetLightColor(color);
+
+                #ifndef STAGING
                 if (getMap() !is null) getMap().UpdateLightingAtPosition(this.getPosition(), light_radius);
+                #endif
             }
         }
         if (shiny.frame > shiny.getFramesCount()) shiny.frame = shiny.frame % shiny.getFramesCount();
