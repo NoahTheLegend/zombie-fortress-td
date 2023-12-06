@@ -68,7 +68,7 @@ void onTick( CBlob@ this)
 	if(this is null){ return; }
 	if(this.getHealth() <= 0){ return; }
 
-	int spawnRate = 30 * + 150*(this.getHealth()/this.getInitialHealth());
+	int spawnRate = 30 + 150*(this.getHealth()/this.getInitialHealth());
 	
 	if(spawnRate <= 0){ return; }
 
