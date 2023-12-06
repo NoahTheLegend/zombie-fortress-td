@@ -364,13 +364,13 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 	
 	if (damage>this.getHealth() && this.getHealth()>0)
 	{
-		if (this.hasTag("activated"))
-		{
-			this.Untag("activated");
-			this.Untag("exploding");				
-			this.Sync("activated",true);
-			this.Sync("exploding",true);			
-		}
+		//if (this.hasTag("activated"))
+		//{
+		//	this.Untag("activated");
+		//	this.Untag("exploding");				
+		//	this.Sync("activated",true);
+		//	this.Sync("exploding",true);			
+		//}
 	
 		if (hitterBlob.hasTag("player"))
 		{
