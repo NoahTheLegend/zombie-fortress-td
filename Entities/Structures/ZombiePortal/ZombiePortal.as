@@ -68,7 +68,7 @@ void onTick( CBlob@ this)
 	if(this is null){ return; }
 	if(this.getHealth() <= 0){ return; }
 
-	int spawnRate = 15 + 175*((this.getHealth()-3.0f)/this.getInitialHealth());
+	int spawnRate = 15 + 175*((this.getHealth()-1.0f)/this.getInitialHealth());
 	if (spawnRate < 15) spawnRate = 5;
 
 	if (getGameTime() % spawnRate == 0 && this.get_bool("portalbreach"))
