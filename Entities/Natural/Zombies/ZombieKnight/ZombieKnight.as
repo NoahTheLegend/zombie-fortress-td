@@ -174,8 +174,8 @@ void onTick(CBlob@ this)
 	if (this.getHealth()<0.0) return;
 	
 	float difficulty = getRules().get_f32("difficulty");
-	int break_chance = 5 - 2*(difficulty-1.0);
-		if (break_chance<2) break_chance=2;
+	int break_chance = 10 - 2*(difficulty-1.0);
+		if (break_chance<3) break_chance=2;
 	
 	if (getGameTime() % 30 == 0 && (XORRandom(break_chance)==0))
 	{	
