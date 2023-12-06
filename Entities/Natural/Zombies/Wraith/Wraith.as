@@ -133,7 +133,7 @@ void onInit(CBlob@ this)
     this.set_f32("explosive_damage",10.0f);
     this.set_u8("custom_hitter", Hitters::bomb);
     this.set_string("custom_explosion_sound", "Entities/Items/Explosives/KegExplosion.ogg");
-    this.set_f32("map_damage_radius", 32.0f);
+    this.set_f32("map_damage_radius", 40.0f);
     this.set_f32("map_damage_ratio", 0.5f);
     this.set_bool("map_damage_raycast", true);
 	this.set_f32("keg_time", 120.0f);  // 180.0f
