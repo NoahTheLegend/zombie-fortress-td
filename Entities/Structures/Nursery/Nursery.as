@@ -24,6 +24,9 @@ void onInit( CBlob@ this )
 	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 25);
 
+	this.Tag("builder always hit");
+	this.Tag("builder urgent hit");
+
 	{
 		ShopItem@ s = addShopItem( this, "Oak tree seed", "$tree_bushy$", "tree_bushy", "Oak seed", false);
 		AddRequirement( s.requirements, "coin", "Oak seed", "Denars", 750 );
