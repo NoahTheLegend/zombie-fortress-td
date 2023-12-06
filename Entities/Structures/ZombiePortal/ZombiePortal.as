@@ -68,9 +68,8 @@ void onTick( CBlob@ this)
 	if(this is null){ return; }
 	if(this.getHealth() <= 0){ return; }
 
-	int spawnRate = 30 + 150*(this.getHealth()/this.getInitialHealth());
-	
-	if(spawnRate <= 0){ return; }
+	int spawnRate = 15 + 175*((this.getHealth()-3.0f)/this.getInitialHealth());
+	if (spawnRate < 15) spawnRate = 5;
 
 	if (getGameTime() % spawnRate == 0 && this.get_bool("portalbreach"))
 	{
@@ -90,7 +89,7 @@ void onTick( CBlob@ this)
 	int num_zombies = getRules().get_s32("num_zombies");
 	if (this.get_bool("portalbreach"))
 	{
-		if ((getGameTime() % spawnRate == 0) && num_zombies < 100)
+		if ((getGameTime() % spawnRate == 0) && num_zombies < 200)
 		{
 		CBlob@[] blobs;
 		getMap().getBlobsInRadius( this.getPosition(), 256, @blobs );
@@ -183,7 +182,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 
 	Vec2f sp = this.getPosition();
 	
-	if (!this.get_bool("portalbreach") && XORRandom(8) == 0)
+	if (!this.get_bool("portalbreach") && (XORRandom(8) == 0 || damage > 1.0f))
 	{
 		CBlob@[] blobs;
 		this.getMap().getBlobsInRadius( sp, 64, @blobs );
