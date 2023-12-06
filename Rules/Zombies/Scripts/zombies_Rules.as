@@ -285,7 +285,7 @@ shared class ZombiesSpawns : RespawnSystem
 			int timeElapsed = ((getGameTime()-gamestart)/getTicksASecond()) % day_cycle;
 
 			f32 daytime = getMap().getDayTime();
-			tickspawndelay = daytime>0.2f&&daytime<0.75f?30*30:120*30;
+			tickspawndelay = daytime>0.2f&&daytime<0.75f?60*30:180*30;
 			warn("DC: "+day_cycle+" TE:"+timeElapsed+" TD:"+tickspawndelay);
 			if (timeElapsed<10) tickspawndelay=0;
 		}
