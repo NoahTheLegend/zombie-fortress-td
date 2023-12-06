@@ -68,7 +68,7 @@ void onTick( CBlob@ this)
 	if(this is null){ return; }
 	if(this.getHealth() <= 0){ return; }
 
-	int spawnRate = 16 + (184*this.getHealth() / 42.0);
+	int spawnRate = 30 * + 150*(this.getHealth()/this.getInitialHealth());
 	
 	if(spawnRate <= 0){ return; }
 
@@ -103,14 +103,14 @@ void onTick( CBlob@ this)
 		{
 			if (zambies[i] !is null && zambies[i].hasTag("zombie")) zombies++;
 		}
-		if (zombies > 16) return;
+		if (zombies > 16+(getPlayersCount()*1.5f)) return;
 		
 			Vec2f sp = this.getPosition();
 			
 			int r;
 			r = XORRandom(9);
 			int rr = XORRandom(8);
-			if (r==8 && rr<3)
+			if (r==8)
 			server_CreateBlob( "Wraith", -1, sp);
 			else										
 			if (r==7 && rr<3)
