@@ -129,7 +129,7 @@ void onInit(CBlob@ this)
 	this.set_f32("gib health", -3.0f);	
 	float difficulty = getRules().get_f32("difficulty")/4.0;
 	if (difficulty<1.0) difficulty=1.0;
-	this.set_f32("bite damage", 1.0f);
+	this.set_f32("bite damage", 0.75f);
 	int bitefreq = 30-difficulty*4.0;
 	if (bitefreq<10) bitefreq=10;
 	this.set_u16("bite freq", bitefreq);
