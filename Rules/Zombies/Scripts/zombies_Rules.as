@@ -7,6 +7,7 @@
 #include "RulesCore.as";
 #include "RespawnSystem.as";
 #include "zombies_Technology.as";
+#include "MigrantCommon.as";
 
 const int base_pool = 1500;
 const int day_pool = 100;
@@ -332,6 +333,9 @@ shared class ZombiesSpawns : RespawnSystem
 
 };
 
+const u8 bots_per_player = 2;
+const u8 max_bots = 20;
+
 shared class ZombiesCore : RulesCore
 {
     s32 warmUpTime;
@@ -465,8 +469,28 @@ shared class ZombiesCore : RulesCore
 						server_CreateBlob( "BossZombieKnight", -1, sp);
 					}*/
 				}
-				else
+				else if (map.getDayTime() > 0.5f && map.getDayTime() < 0.7f)
 				{
+					CBlob@[] bots;
+					getBlobsByTag("player", @bots);
+					getBlobsByName("migrant", @bots);
+
+					u16 actual_bots = 0;
+					for (u16 i = 0; i < bots.size(); i++)
+					{
+						CBlob@ b = bots[i];
+						if (b is null) continue;
+						if (b.getPlayer() !is null) continue;
+
+						actual_bots++;
+					}
+					if (actual_bots < Maths::Min(getPlayersCount() * bots_per_player, max_bots)
+						&& XORRandom(7) == 0)
+					{
+						Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
+						CreateMigrant(sp, 1);
+					}
+
 					if (transition == 0)
 					{	
 						rules.set_s32("transition",1);

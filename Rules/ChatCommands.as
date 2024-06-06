@@ -5,6 +5,7 @@
 #include "MakeSeed.as";
 #include "MakeCrate.as";
 #include "MakeScroll.as";
+#include "MigrantCommon.as";
 
 bool onServerProcessChat(CRules@ this, const string& in text_in, string& out text_out, CPlayer@ player)
 {
@@ -116,6 +117,10 @@ bool onServerProcessChat(CRules@ this, const string& in text_in, string& out tex
 		else if (text_in == "!coins")
 		{
 			player.server_setCoins(player.getCoins() + 1000);
+		}
+		else if (text_in == "!m")
+		{
+			CreateMigrant(blob.getPosition(), blob.getTeamNum());
 		}
 		else if (text_in.substr(0, 1) == "!")
 		{

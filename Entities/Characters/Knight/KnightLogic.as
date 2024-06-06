@@ -8,7 +8,7 @@
 #include "Knocked.as"
 #include "Help.as";
 #include "Requirements.as"
-
+#include "MigrantCommon.as";
 
 //attacks limited to the one time per-actor before reset.
 
@@ -44,6 +44,14 @@ void knight_clear_actor_limits(CBlob@ this)
 
 void onInit(CBlob@ this)
 {
+	this.addCommandID("switch_strategy");
+	this.addCommandID("switch_class");
+
+	AddIconToken("$fighter_follow$", "Orders.png", Vec2f(32,32), 4);
+	AddIconToken("$fighter_find_crystal$", "Orders.png", Vec2f(32,32), 0);
+	AddIconToken("$fighter_idle$", "Orders.png", Vec2f(32,32), 3);
+	AddIconToken("$fighter_defend$", "Orders.png", Vec2f(32,32), 1);
+
 	KnightInfo knight;
 
 	knight.state = KnightStates::normal;
@@ -673,6 +681,56 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			SetFirstAvailableBomb(this);
 		}
 	}
+	else if (cmd == this.getCommandID("switch_strategy"))
+	{
+		u8 strategy = params.read_u8() % FStrategy::sum;
+		u16 id = params.read_u16();
+		//printf(""+strategy);
+
+		switch(strategy)
+		{
+			case FStrategy::idle:
+			{
+				this.set_u16("follow_id", 0);
+				break;
+			}
+			case FStrategy::find_crystal:
+			{
+				break;
+			}
+			case FStrategy::follow:
+			case FStrategy::defend:
+			{
+				CBlob@ caller = getBlobByNetworkID(id);
+				if (caller is null || caller.hasTag("dead") || !caller.hasTag("player"))
+					id = 0;
+
+				this.set_u16("follow_id", id);
+				break;
+			}
+		}
+
+		SetStrategy(this, strategy);
+	}
+	else if (cmd == this.getCommandID("switch_class"))
+	{
+		if (this.hasTag("switched")) return;
+		this.Tag("switched");
+
+		if (isClient())
+		{
+			this.getSprite().PlaySound("ResearchComplete.ogg", 1.5f, 1.0f);
+		}
+		if (isServer())
+		{
+			CBlob@ b = CreateMigrant(this.getPosition(), 1, "archer");
+			if (b !is null)
+			{
+				SetStrategy(b, FStrategy::idle);
+				this.server_Die();
+			}
+		}
+	}
 	else if (cmd == this.getCommandID("cycle"))  //from standardcontrols
 	{
 		// cycle arrows
@@ -710,6 +768,90 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			}
 		}
 	}
+}
+
+void GetButtonsFor(CBlob@ this, CBlob@ caller)
+{
+	if (this.getPlayer() !is null) return;
+	if (caller is null || this.hasTag("dead")) return;
+	if (this.getDistanceTo(caller) > 32.0f) return;
+
+	u8 strategy = this.get_u8("strategy");
+	string icon = "";
+	Vec2f offset = Vec2f(0, -12);
+	string description = "";
+
+	switch(strategy) // switch to next strat
+	{
+		case FStrategy::idle:
+		{
+			icon = "$fighter_follow$";
+			description = "\nFollow me";
+			break;
+		}
+		case FStrategy::follow:
+		{
+			icon = "$fighter_find_crystal$";
+			description = "\nGo to crystal";
+			break;
+		}
+		case FStrategy::find_crystal:
+		{
+			icon = "$fighter_defend$";
+			description = "\nDefend me";
+			break;
+		}
+		case FStrategy::defend:
+		{
+			icon = "$fighter_idle$";
+			description = "\nStay here";
+			break;
+		}
+	}
+
+	CBitStream params;
+	params.write_u8(strategy+1);
+	params.write_u16(caller.getNetworkID());
+	CButton@ button = caller.CreateGenericButton(
+			icon,                                
+			offset,                           
+			this,                                                    
+			this.getCommandID("switch_strategy"),                                              
+			description,
+			params
+		);
+
+	CMap@ map = getMap();
+	if (map is null) return;
+
+	bool near_crystal = false;
+	CBlob@[] bs;
+	getBlobsByTag("crystal", @bs);
+	for (u8 i = 0; i < bs.size(); i++)
+	{
+		CBlob@ b = bs[i];
+		if (b is null) continue;
+		
+		if (b.getDistanceTo(this) < 48.0f
+			&& !map.rayCastSolidNoBlobs(this.getPosition(), b.getPosition()))
+		{
+			near_crystal = true;
+			break;
+		}
+	}
+
+	if (!near_crystal) return;
+
+	CBitStream params1;
+	params1.write_u16(caller.getNetworkID());
+	CButton@ button1 = caller.CreateGenericButton(
+			28,                             
+			Vec2f(0,8),                           
+			this,                                                    
+			this.getCommandID("switch_class"),                                              
+			"\nSwitch to archer",
+			params1
+		);
 }
 
 /////////////////////////////////////////////////

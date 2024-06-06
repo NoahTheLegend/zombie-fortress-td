@@ -62,18 +62,40 @@ void onTick( CBrain@ this )
 	CBlob @blob = this.getBlob();
 	u8 delay = blob.get_u8(delay_property);
 	delay--;
+
+	CBlob@ nearest_crystal;
+	CBlob@[] bs;
+	getBlobsByTag("crystal", @bs);
+	f32 dist = 99999.0f;
+	for (u8 i = 0; i < bs.size(); i++)
+	{
+		CBlob@ b = bs[i];
+		if (b is null) continue;
+		f32 temp_dist = b.getDistanceTo(blob);
+		if (temp_dist < dist)
+		{
+			dist = temp_dist;
+			@nearest_crystal = @b;
+		}
+	}
 	
 	if (delay == 0)
 	{
-
 		const CBrain::BrainState state = this.getState();
 		if (blob.get_u8(state_property) == MODE_TARGET)
 		{
 			CBlob@ target = getBlobByNetworkID(blob.get_netid(target_property));
 			
-			if (target is null || (XORRandom(blob.get_u8(target_lose_random) ) == 0 && !target.hasTag("crystal")))
+			if (target is null || ((XORRandom(blob.get_u8(target_lose_random)) == 0 || !isVisible(blob, target))
+				&& (dist > 128.0f || !target.hasTag("crystal"))))
 			{
 				blob.set_u8(state_property,MODE_IDLE);
+
+				if (XORRandom(4) == 0)
+				{
+					@target = nearest_crystal;
+					this.SetTarget(nearest_crystal);
+				}
 			}
 			//if (blob.getName() == "Greg" && target !is null) { blob.setKeyPressed( (target.getPosition().y > blob.getPosition().y) ? key_down : key_up, true); } 
 			//if (blob.getName() == "Wraith" && target !is null) { 
@@ -87,7 +109,7 @@ void onTick( CBrain@ this )
 			}
 			else
 			{
-				if (target !is null) JustGo( blob, target );
+				if (target !is null) JustGo(blob, target);
 				JumpOverObstacles( blob );
 				delay = 4+XORRandom(4);
 				blob.set_u8(delay_property, delay);
@@ -204,7 +226,7 @@ void onTick( CBrain@ this )
 
 					CBlob@[] blobs;
 					blob.getMap().getBlobsInRadius( pos, search_radius+100.0, @blobs );
-					f32 best_dist=99999999;
+					f32 best_dist=999999;
 					for (uint step = 0; step < blobs.length; ++step)
 					{
 						//TODO: sort on proximity? done by engine?
@@ -255,19 +277,16 @@ void onTick( CBrain@ this )
 									f32 dist = (tpos - pos).getLength();
 									if (dist < best_dist || (XORRandom(8) == 0))
 									{
-										//if (XORRandom(8) == 0) 
-										{ 
-											//if (XORRandom(10) == 0)
-											if (isVisible(blob,other) || blob.hasTag("crystal") || (XORRandom(8) == 0))
-											{
-												mode = MODE_TARGET;
-												blob.set_netid(target_property,other.getNetworkID());
-												blob.Sync(target_property,true);
-												best_dist=dist;
-												this.SetPathTo(tpos, false);
-												//break;
-											}
-											
+										if (isVisible(blob,other) || blob.hasTag("crystal")
+											|| (XORRandom(8) == 0 && blob.getShape() !is null && !blob.getShape().isStatic()))
+										{
+											mode = MODE_TARGET;
+											//print(isVisible(blob,other)+" other "+other.getName());
+											blob.set_netid(target_property,other.getNetworkID());
+											blob.Sync(target_property,true);
+											best_dist=dist;
+											this.SetPathTo(tpos, false);
+											//break;
 										}
 									}
 								}

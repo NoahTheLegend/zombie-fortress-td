@@ -72,7 +72,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 
 void GetButtonsFor(CBlob@ this, CBlob@ caller)
 {
-	if (!canSeeButtons(this, caller)) return;
+	if (!this.isOverlapping(caller)) return;
 
 	if (canChangeClass(this, caller))
 	{

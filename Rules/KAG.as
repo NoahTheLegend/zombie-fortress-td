@@ -7,6 +7,7 @@ bool gameStarted = false;
 
 void onInit(CRules@ this)
 {
+	getNet().legacy_cmd = true;
 	LoadDefaultMapLoaders();
 	LoadDefaultGUI();
 
@@ -95,12 +96,12 @@ void onEnterChat(CRules @this)
 
 	CBlob@ localblob = getLocalPlayerBlob();
 	if (localblob !is null)
-		set_emote(localblob, "dots", 100000);
+		set_emote(localblob, Emotes::dots, 100000);
 }
 
 void onExitChat(CRules @this)
 {
 	CBlob@ localblob = getLocalPlayerBlob();
 	if (localblob !is null)
-		set_emoteByCommand(localblob, "");
+		set_emote(localblob, Emotes::off);
 }
