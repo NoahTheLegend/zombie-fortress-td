@@ -333,8 +333,8 @@ shared class ZombiesSpawns : RespawnSystem
 
 };
 
-const u8 bots_per_player = 2;
-const u8 max_bots = 20;
+const u8 bots_per_player = 3;
+const u8 max_bots = 18;
 
 shared class ZombiesCore : RulesCore
 {

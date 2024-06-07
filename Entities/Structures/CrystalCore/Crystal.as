@@ -95,6 +95,27 @@ void onTick(CBlob@ this)
     if (!this.exists("init_pos")) this.set_Vec2f("init_pos", this.getPosition());
     else this.setPosition(this.get_Vec2f("init_pos") + Vec2f(0, -Maths::Sin(gt*0.015f)*5.0f));
 
+    if ((getGameTime()+this.getNetworkID())%90==0)
+    {
+        CBlob@[] bs;
+        getMap().getBlobsInRadius(this.getPosition()+Vec2f(0,8), 32.0f, @bs);
+        for (u16 i = 0; i < bs.size(); i++)
+        {
+            CBlob@ b = bs[i];
+            if (b is null || !b.hasTag("player") || b.getPlayer() !is null) continue;
+            if (b.getHealth() == b.getInitialHealth()) continue;
+
+            if (isClient())
+            {
+                this.getSprite().PlaySound("Heart.ogg");
+            }
+            if (isServer() && b.getHealth() < b.getInitialHealth())
+            {
+                b.server_Heal(Maths::Min(b.getInitialHealth() - b.getHealth(), 1.0f));
+            }
+        }
+    }
+
     if (isClient())
     {
         CSprite@ sprite = this.getSprite();

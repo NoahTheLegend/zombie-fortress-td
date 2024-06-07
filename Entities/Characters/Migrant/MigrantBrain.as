@@ -4,7 +4,6 @@
 
 #include "EmotesCommon.as"
 #include "MigrantCommon.as"
-#include "RunnerCommon.as";
 
 void onInit(CBrain@ this)
 {
@@ -13,7 +12,7 @@ void onInit(CBrain@ this)
 	blob.set_bool("justgo", false);
 	blob.set_Vec2f("target spot", Vec2f_zero);
 	blob.set_u8("strategy", Strategy::find_crystal);
-	blob.set_Vec2f("hold_position", Vec2f_zero);
+	blob.set_Vec2f("last_order_pos", Vec2f_zero);
 	blob.set_u16("follow_id", 0);
 
 	this.getCurrentScript().removeIfTag = "dead";
@@ -26,13 +25,16 @@ void onTick(CBrain@ this)
 	if (blob is null || blob.getTeamNum() > 10)
 		return;
 
+	if (this.getCurrentScript().tickFrequency == 30)
+		RandomTurn(blob);
+
 	if (blob.getName() == "migrant")
 		MigrantTick(this, blob);
-	else if (blob.getName() == "knight")
-		KnightTick(this, blob);
+	else
+		FighterTick(this, blob);
 }
 
-void KnightTick(CBrain@ this, CBlob@ blob) // todo: knight advanced movement? + attacks
+void FighterTick(CBrain@ this, CBlob@ blob)
 {
 	const bool isStatic = blob.getShape().isStatic();
 
@@ -42,21 +44,30 @@ void KnightTick(CBrain@ this, CBlob@ blob) // todo: knight advanced movement? + 
 	}
 		
 	u8 delay = blob.get_u8("strategy_delay");
-	u8 strategy = FStrategy::idle;
+	u8 retreating = blob.get_u16("retreating");
+	u8 strategy = delay == 0 ? blob.get_u8("strategy") : FStrategy::idle;
 	CBlob@ enemy = null;
 	CBlob@ nearest_ally = null;
-	
+
+	bool idle = strategy == FStrategy::idle;
+	bool follow = strategy == FStrategy::follow;
+	bool defend = strategy == FStrategy::defend;
+	bool find_crystal = strategy == FStrategy::find_crystal;
 	Vec2f pos = blob.getPosition();
+
+	bool archer = blob.getName() == "archer";
+	CBlob@ latest_enemy = blob.get_u16("attack_id") == 0 ? null : getBlobByNetworkID(blob.get_u16("attack_id"));
+
 	if (!isStatic)
 	{
-		strategy = delay == 0 ? blob.get_u8("strategy") : FStrategy::idle;
 		//printf("strat: "+strategy);
 
 		CMap@ map = getMap();
 		CBlob@[] bs;
 		if (map !is null)
 		{
-			map.getBlobsInRadius(blob.getPosition(), 96.0f, @bs);
+			f32 enemy_dist = 999.0f;
+			map.getBlobsInRadius(blob.getPosition(), archer ? 256.0f : 128.0f, @bs);
 			for (u16 i = 0; i < bs.size(); i++)
 			{
 				CBlob@ b = bs[i];
@@ -69,19 +80,22 @@ void KnightTick(CBrain@ this, CBlob@ blob) // todo: knight advanced movement? + 
 				{
 					@nearest_ally = @b;
 				}
-				if (b.hasTag("zombie"))
+
+				f32 temp_enemy_dist = b.getDistanceTo(blob);
+				if (b.hasTag("zombie") && temp_enemy_dist < enemy_dist)
 				{
+					enemy_dist = temp_enemy_dist;
 					@enemy = @b;
 				}
 			}
 		}
 		// normal AI
-		if (blob.getHealth() / blob.getInitialHealth() > 0.25f || strategy == FStrategy::find_crystal)
+		if (blob.getHealth() / blob.getInitialHealth() > 0.25f || find_crystal || retreating > 0)
 		{
-			CBlob@ target = strategy == FStrategy::idle ? null : this.getTarget();
-			this.getCurrentScript().tickFrequency = strategy == FStrategy::idle ? 30 : 1;
+			CBlob@ target = idle ? enemy : this.getTarget();
+			this.getCurrentScript().tickFrequency = idle && enemy is null && retreating == 0 ? 30 : 1;
 
-			if (strategy == FStrategy::find_crystal) //crystals should heal nearby bots
+			if (find_crystal) //crystals should heal nearby bots
 			{
 				CBlob@[] crystals;
 				getBlobsByTag("crystal", @crystals);
@@ -103,24 +117,53 @@ void KnightTick(CBrain@ this, CBlob@ blob) // todo: knight advanced movement? + 
 
 				if (target_id != 0)
 				{
-					blob.set_u16("follow_id", target_id);
 					@target = getBlobByNetworkID(target_id);
+					if (target !is null && target.hasTag("player"))
+						blob.set_u16("follow_id", target_id);
 					this.SetTarget(target);
 				}
 			}
+
+			Vec2f last_order_pos = blob.get_Vec2f("last_order_pos");
 			u16 follow_id = blob.get_u16("follow_id");
-			if (strategy == FStrategy::follow || strategy == FStrategy::defend)
+			if (follow || defend)
 			{
 				@target = getBlobByNetworkID(follow_id);
 				if (target is null) SetStrategy(blob, Strategy::find_crystal);
 				this.SetTarget(target);
 			}
 
-			if (strategy != FStrategy::idle && target !is null)
+			if (!find_crystal)
+			{
+				const bool stuck = this.getState() == CBrain::stuck;
+				if (!stuck) // retreat back to ally or order pos
+				{
+					if (idle && (pos-last_order_pos).Length() > 96.0f)
+					{
+						blob.set_u16("retreating", 30);
+						GoToBlob(this, null, last_order_pos);
+					}
+					else if (follow && blob.getDistanceTo(target) > 96.0f)
+					{
+						blob.set_u16("retreating", 75);
+						GoToBlob(this, target);
+					}
+				}
+			}
+
+			if (retreating > 0)
+			{
+				if (idle)
+					GoToBlob(this, null, last_order_pos);
+				else
+					GoToBlob(this, target);
+			}
+			else if (latest_enemy is null && strategy != FStrategy::idle && target !is null) // follow or defend
 			{
 				GoToBlob(this, target);
 			}
 
+			blob.set_u16("attack_id", enemy is null || !enemy.hasTag("zombie") ? 0 : enemy.getNetworkID());
 			if (target !is null)
 			{
 				const int state = this.getState();
@@ -129,7 +172,7 @@ void KnightTick(CBrain@ this, CBlob@ blob) // todo: knight advanced movement? + 
 				if (target !is null)
 					if ((XORRandom(10) == 0 && target.hasTag("dead")))
 					{
-						if (strategy == FStrategy::defend)
+						if (defend)
 							SetStrategy(blob, FStrategy::find_crystal);
 
 						this.SetTarget(null);
@@ -140,12 +183,58 @@ void KnightTick(CBrain@ this, CBlob@ blob) // todo: knight advanced movement? + 
 
 	if (!isStatic && blob.getHealth() / blob.getInitialHealth() <= 0.25f)
 	{
-		if (nearest_ally is null && strategy != FStrategy::find_crystal)
+		if (nearest_ally is null || find_crystal)
 		{
-			SetStrategy(blob, FStrategy::find_crystal);
+			set_emote(blob, Emotes::attn, 30);
+			if (!find_crystal) SetStrategy(blob, FStrategy::find_crystal);
 		}
-		else if (this.getTarget() !is null)
-			GoToBlob(this, this.getTarget());
+		else
+		{
+			bool visible = enemy !is null && !getMap().rayCastSolid(pos, enemy.getPosition());
+			if (visible && enemy !is null && blob.getDistanceTo(enemy) < 32.0f)
+			{
+				bool go_right = enemy.getPosition().x < pos.x;
+				blob.setKeyPressed(go_right ? key_right : key_left, true);
+				blob.set_u32("shield time", getGameTime());
+				JumpOverObstacles(blob, pos + Vec2f(go_right ? 32.0f : -32.0f, -32.0f));
+
+				set_emote(blob, Emotes::attn, 30);
+			}
+			else
+			{
+				GoToBlob(this, nearest_ally);
+				if (XORRandom(30) == 0)
+					set_emote(blob, XORRandom(2) == 0 ? Emotes::heart : Emotes::frown, 90);
+			}
+		}
+	}
+
+	if (latest_enemy !is null) // attack
+	{
+		if (blob.getName() == "archer")
+		{
+			bool visible = enemy !is null && !getMap().rayCastSolid(pos, enemy.getPosition());
+			if (visible)
+			{
+				if (retreating == 0 || defend)
+					AttackBlobArcher(blob, latest_enemy);
+
+				if (blob.getDistanceTo(latest_enemy) < 40.0f)
+				{
+					bool go_right = enemy.getPosition().x < pos.x;
+					blob.setKeyPressed(go_right ? key_right : key_left, true);
+					blob.set_u32("shield time", getGameTime());
+					JumpOverObstacles(blob, pos + Vec2f(go_right ? 32.0f : -32.0f, -32.0f));
+				}
+			}
+		}
+		else
+		{
+			if (retreating > 0)
+				blob.set_u32("shield time", getGameTime());
+			if (retreating == 0 || defend)
+				AttackBlobKnight(blob, latest_enemy);
+		}
 	}
 
 	if (!isStatic && blob.isInWater())
@@ -158,6 +247,12 @@ void KnightTick(CBrain@ this, CBlob@ blob) // todo: knight advanced movement? + 
 	{
 		this.getCurrentScript().tickFrequency = 1;
 		blob.sub_u8("strategy_delay", 1);
+	}
+
+	if (retreating > 0)
+	{
+		this.getCurrentScript().tickFrequency = 1;
+		blob.sub_u16("retreating", 1);
 	}
 }
 
@@ -318,41 +413,45 @@ void MigrantTick(CBrain@ this, CBlob@ blob)
 
 void Repath(CBrain@ this, Vec2f force_pos = Vec2f_zero)
 {
+	if (this.getTarget() !is null && force_pos != Vec2f_zero) return;
 	this.SetPathTo(force_pos == Vec2f_zero ? this.getTarget().getPosition() : force_pos, false);
 }
 
 const f32 max_path = 312.0f;
-void GoToBlob(CBrain@ this, CBlob@ target)
+void GoToBlob(CBrain@ this, CBlob@ target, Vec2f force_pos = Vec2f_zero)
 {
 	CBlob@ blob = this.getBlob();
 	Vec2f pos = blob.getPosition();
-	Vec2f targetpos = target.getPosition();
+	Vec2f targetpos = force_pos == Vec2f_zero && target !is null ? target.getPosition() : force_pos;
 	u8 strategy = blob.get_u8("strategy");
 
-	//Vec2f dir = targetpos-pos;
-	//if (dir.Length() > max_path)
-	//	Repath(this, Vec2f(max_path*0.9f, 0).RotateBy(-dir.Angle()));
+	bool visible = !getMap().rayCastSolid(pos, targetpos);
+	f32 dist = force_pos == Vec2f_zero && target !is null ? blob.getDistanceTo(target) : (pos-force_pos).Length();
+	bool go_directly = visible && dist < 96.0f;
 
-	Vec2f col;
-	bool visible = !getMap().rayCastSolid(pos, targetpos, col);
-	bool go_directly = visible && blob.getDistanceTo(target) < 96.0f;
-
-	Vec2f new_targetpos = go_directly ? targetpos : this.getNextPathPosition();
-	Vec2f targetVector = new_targetpos - blob.getPosition();
+	Vec2f to = go_directly ? targetpos : this.getNextPathPosition();
+	Vec2f targetVector = to - blob.getPosition();
 	f32 targetDistance = targetVector.Length();
+	
+	Controls(this, blob, target, to, targetVector, targetDistance, strategy, visible, go_directly);
+}
 
-	// check if we have a clear area to the target
+void Controls(CBrain@ this, CBlob@ blob, CBlob@ target, Vec2f to, Vec2f targetVector, f32 targetDistance, u8 strategy, bool visible, bool go_directly)
+{
+	Vec2f pos = blob.getPosition();
 	bool justGo = false;
 
-	if (targetDistance < 24.0f && go_directly &&  target.hasTag("player")) // keep distance from player
+	if (target !is null && targetDistance < 16.0f + (blob.getNetworkID()%16) + (blob.getName() == "archer" ? 8 : 0) && go_directly && target.hasTag("player"))
+	{
 		return;
-
-	if (visible || targetDistance > max_path) // works for fighters as well
+	}
+	
+	if (visible || targetDistance > max_path)
 		justGo = true;
 
 	// repath if no clear path after going at it
 	if ((!justGo && blob.get_bool("justgo"))
-		|| ((pos-new_targetpos).Length() < 16.0f && XORRandom(10) == 0))
+		|| ((pos-to).Length() < 16.0f && XORRandom(15) == 0))
 	{
 		Repath(this);
 	}
@@ -370,12 +469,10 @@ void GoToBlob(CBrain@ this, CBlob@ target)
 	{
 		if (!stuck || XORRandom(100) < 10)
 		{
-			JustGo(this, target);
-			
-			if (!stuck)
-			{
-				blob.set_u8("emote", Emotes::off);
-			}
+			if (target is null)
+				JustGo(this, null, to);
+			else
+				JustGo(this, target);
 		}
 		else
 			justGo = false;
@@ -404,13 +501,13 @@ void GoToBlob(CBrain@ this, CBlob@ target)
 				if (XORRandom(100) == 0)
 				{
 					set_emote(blob, Emotes::frown);
-					f32 dist = Maths::Abs(new_targetpos.x - pos.x);
+					f32 dist = Maths::Abs(to.x - pos.x);
 					if (dist > 20.0f)
 					{
 						if (dist < 50.0f)
-							set_emote(blob, new_targetpos.y > pos.y ? Emotes::down : Emotes::up);
+							set_emote(blob, to.y > pos.y ? Emotes::down : Emotes::up);
 						else
-							set_emote(blob, new_targetpos.x > pos.x ? Emotes::right : Emotes::left);
+							set_emote(blob, to.x > pos.x ? Emotes::right : Emotes::left);
 					}
 				}
 				break;
@@ -419,64 +516,27 @@ void GoToBlob(CBrain@ this, CBlob@ target)
 				Repath(this);
 				if (XORRandom(100) == 0)
 				{
-					if (Maths::Abs(new_targetpos.x - pos.x) < 50.0f)
-						set_emote(blob, new_targetpos.y > pos.y ? Emotes::down : Emotes::up);
+					if (Maths::Abs(to.x - pos.x) < 50.0f)
+						set_emote(blob, to.y > pos.y ? Emotes::down : Emotes::up);
 					else
-						set_emote(blob, new_targetpos.x > pos.x ? Emotes::right : Emotes::left);
+						set_emote(blob, to.x > pos.x ? Emotes::right : Emotes::left);
 				}
 				break;
 		}
 	}
 
 	// face the enemy
-	blob.setAimPos(new_targetpos);
-
+	blob.setAimPos(target is null ? to : target.getPosition());
 	// jump over small blocks
 
-	JumpOverObstacles(blob, new_targetpos);
+	JumpOverObstacles(blob, to);
 }
 
-void JumpOverObstacles(CBlob@ blob, Vec2f target_pos, bool reverse = false)
-{
-	Vec2f pos = blob.getPosition();
-	if (!blob.isOnLadder())
-	{
-		if ((blob.isKeyPressed(key_right) && (getMap().isTileSolid(pos + Vec2f(1.3f * blob.getRadius(), blob.getRadius()) * 1.0f) || blob.getShape().vellen < 0.1f)) ||
-		        (blob.isKeyPressed(key_left)  && (getMap().isTileSolid(pos + Vec2f(-1.3f * blob.getRadius(), blob.getRadius()) * 1.0f) || blob.getShape().vellen < 0.1f)))
-		{
-			blob.setKeyPressed(key_up, true);
-		}
-
-		if (blob.isOnWall())
-		{
-			RunnerMoveVars@ moveVars;
-			if (blob.get("moveVars", @moveVars))
-			{
-				bool go_left = target_pos.x < pos.x;
-				if (moveVars.wallrun_count < 2)
-					blob.setKeyPressed(go_left ? key_left : key_right, true);
-
-				blob.setKeyPressed(key_up, true);
-			}
-		}
-	}
-	else
-	{
-		bool below = target_pos.y > pos.y;
-		if (reverse) below = !below;
-
-		if (below)
-			blob.setKeyPressed(key_down, true);
-		else
-			blob.setKeyPressed(key_up, true);
-	}
-}
-
-bool JustGo(CBrain@ this, CBlob@ target)
+bool JustGo(CBrain@ this, CBlob@ target, Vec2f force_pos = Vec2f_zero)
 {
 	CBlob @blob = this.getBlob();
 	Vec2f pos = blob.getPosition();
-	Vec2f target_pos = target.getPosition();
+	Vec2f target_pos = force_pos == Vec2f_zero && target !is null ? target.getPosition() : force_pos;
 	const f32 horiz_distance = Maths::Abs(target_pos.x - pos.x);
 
 	if (horiz_distance > blob.getRadius() * 0.75f)
@@ -490,7 +550,7 @@ bool JustGo(CBrain@ this, CBlob@ target)
 			blob.setKeyPressed(key_right, true);
 		}
 
-		if (target_pos.y + getMap().tilesize * 0.7f < pos.y && (target.isOnGround() || target.getShape().isStatic()))  	 // dont hop with me
+		if (target !is null && target_pos.y + getMap().tilesize * 0.7f < pos.y && (target.isOnGround() || target.getShape().isStatic()))  	 // dont hop with me
 		{
 			blob.setKeyPressed(key_up, true);
 		}

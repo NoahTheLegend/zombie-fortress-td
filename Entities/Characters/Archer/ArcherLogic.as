@@ -20,6 +20,8 @@ void onInit(CBlob@ this)
 {
 	this.addCommandID("switch_strategy");
 	this.addCommandID("switch_class");
+	this.addCommandID("sync_strategy");
+	this.set_u32("switch_button_delay", 0);
 
 	AddIconToken("$fighter_follow$", "Orders.png", Vec2f(32,32), 4);
 	AddIconToken("$fighter_find_crystal$", "Orders.png", Vec2f(32,32), 0);
@@ -280,7 +282,7 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 {
 	CSprite@ sprite = this.getSprite();
 	bool ismyplayer = this.isMyPlayer();
-	bool hasarrow = archer.has_arrow;
+	bool hasarrow = archer.has_arrow || this.getPlayer() is null;
 	s8 charge_time = archer.charge_time;
 	u8 charge_state = archer.charge_state;
 	const bool pressed_action2 = this.isKeyPressed(key_action2);
@@ -865,9 +867,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 	else if (cmd == this.getCommandID("switch_strategy"))
 	{
-		u8 strategy = params.read_u8() % FStrategy::sum;
+		u8 strategy = (params.read_u8()+1) % FStrategy::sum;
 		u16 id = params.read_u16();
-		//printf(""+strategy);
+
+		this.set_u32("switch_button_delay", getGameTime()+5);
 
 		switch(strategy)
 		{
@@ -912,6 +915,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 				this.server_Die();
 			}
 		}
+	}
+	else if (cmd == this.getCommandID("sync_strategy"))
+	{
+		bool change = params.read_bool();
+		u8 strategy = params.read_u8();
+		
+		this.set_bool("changed_strategy", change);
+		this.set_u8("strategy", strategy);
 	}
 	else if (cmd == this.getCommandID("pickup arrow"))
 	{
@@ -1022,7 +1033,8 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 {
 	if (this.getPlayer() !is null) return;
 	if (caller is null || this.hasTag("dead")) return;
-	if (this.getDistanceTo(caller) > 32.0f) return;
+	if (this.getDistanceTo(caller) > 48.0f) return;
+	if (this.get_u32("switch_button_delay") > getGameTime()) return;
 
 	u8 strategy = this.get_u8("strategy");
 	string icon = "";

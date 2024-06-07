@@ -161,6 +161,8 @@ const string[] arrowIcons = { "$Arrow$",
 
 bool hasArrows(CBlob@ this)
 {
+	if (this.getPlayer() is null) return true;
+
 	ArcherInfo@ archer;
 	if (!this.get("archerInfo", @archer))
 	{
@@ -175,6 +177,8 @@ bool hasArrows(CBlob@ this)
 
 bool hasArrows(CBlob@ this, u8 arrowType)
 {
+	if (this.getPlayer() is null) return true;
+	
 	return this.getBlobCount(arrowTypeNames[arrowType]) > 0;
 }
 

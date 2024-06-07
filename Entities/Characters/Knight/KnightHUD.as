@@ -32,6 +32,11 @@ void ManageCursors(CBlob@ this)
 	}
 }
 
+//const int edges = 360;
+//const f32 degree = 360 / edges;
+//const f32 angle = degree * (Maths::Pi/180);
+//const f32 radius = 512.0f;
+
 void onRender(CSprite@ this)
 {
 	if (g_videorecording)
@@ -39,7 +44,23 @@ void onRender(CSprite@ this)
 
 	CBlob@ blob = this.getBlob();
 	CPlayer@ player = blob.getPlayer();
+	/*
+	{
+		f32 screen_radius = radius * getCamera().targetDistance;
+		f32 len = 2 * screen_radius * Maths::Sin(angle/2);
 
+		Vec2f pos2d = Vec2f_lerp(blob.getOldPosition(), blob.getPosition(), getInterpolationFactor());
+		pos2d = getDriver().getScreenPosFromWorldPos(pos2d);
+		for (int i = 0; i < edges; i++)
+		{
+			f32 current_angle = angle * i;
+    		f32 next_angle = angle * (i + 1);
+			Vec2f startpos = pos2d + Vec2f(Maths::Cos(current_angle), Maths::Sin(current_angle)) * screen_radius;
+			Vec2f endpos = pos2d + Vec2f(Maths::Cos(next_angle), Maths::Sin(next_angle)) * screen_radius;
+			GUI::DrawLine2D(startpos, endpos, SColor(255, 255, 255, 0));
+		}
+	}
+	*/
 	ManageCursors(blob);
 
 	// draw inventory

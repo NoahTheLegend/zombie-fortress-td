@@ -46,6 +46,8 @@ void onInit(CBlob@ this)
 {
 	this.addCommandID("switch_strategy");
 	this.addCommandID("switch_class");
+	this.addCommandID("sync_strategy");
+	this.set_u32("switch_button_delay", 0);
 
 	AddIconToken("$fighter_follow$", "Orders.png", Vec2f(32,32), 4);
 	AddIconToken("$fighter_find_crystal$", "Orders.png", Vec2f(32,32), 0);
@@ -683,9 +685,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 	else if (cmd == this.getCommandID("switch_strategy"))
 	{
-		u8 strategy = params.read_u8() % FStrategy::sum;
+		u8 strategy = (params.read_u8()+1) % FStrategy::sum;
 		u16 id = params.read_u16();
-		//printf(""+strategy);
+
+		this.set_u32("switch_button_delay", getGameTime()+5);
 
 		switch(strategy)
 		{
@@ -731,6 +734,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			}
 		}
 	}
+	else if (cmd == this.getCommandID("sync_strategy"))
+	{
+		bool change = params.read_bool();
+		u8 strategy = params.read_u8();
+		
+		this.set_bool("changed_strategy", change);
+		this.set_u8("strategy", strategy);
+	}
 	else if (cmd == this.getCommandID("cycle"))  //from standardcontrols
 	{
 		// cycle arrows
@@ -774,7 +785,8 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 {
 	if (this.getPlayer() !is null) return;
 	if (caller is null || this.hasTag("dead")) return;
-	if (this.getDistanceTo(caller) > 32.0f) return;
+	if (this.getDistanceTo(caller) > 48.0f) return;
+	if (this.get_u32("switch_button_delay") > getGameTime()) return;
 
 	u8 strategy = this.get_u8("strategy");
 	string icon = "";
@@ -810,7 +822,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	}
 
 	CBitStream params;
-	params.write_u8(strategy+1);
+	params.write_u8(strategy);
 	params.write_u16(caller.getNetworkID());
 	CButton@ button = caller.CreateGenericButton(
 			icon,                                
