@@ -599,6 +599,7 @@ void spawnRandomScroll(Vec2f pos)
 
 void onInit(CRules@ this)
 {
+	this.set_u32("match", 0);
 	Reset(this);
 }
 
@@ -609,6 +610,7 @@ void onRestart(CRules@ this)
 
 void Reset(CRules@ this)
 {
+	this.add_u32("match", 1);
 	int gamestart = this.get_s32("gamestart");			
 	int day_cycle = getRules().daycycle_speed*60;			
 	int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;

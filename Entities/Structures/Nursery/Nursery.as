@@ -20,7 +20,7 @@ void onInit( CBlob@ this )
 	// SHOP
 
 	this.set_Vec2f("shop offset", Vec2f(0, 0));
-	this.set_Vec2f("shop menu size", Vec2f(4,1));	
+	this.set_Vec2f("shop menu size", Vec2f(4,2));	
 	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 25);
 
@@ -28,26 +28,37 @@ void onInit( CBlob@ this )
 	this.Tag("builder urgent hit");
 
 	{
-		ShopItem@ s = addShopItem( this, "Oak tree seed", "$tree_bushy$", "tree_bushy", "Oak seed", false);
+		ShopItem@ s = addShopItem(this, "Wheat", "$wheatbunch$", "wheatbunch", "Bunch of Wheat", false);
+		AddRequirement(s.requirements, "coin", "", "Denars", 2);
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Nut", "$nut$", "nut", "Nut", false);
+		AddRequirement(s.requirements, "coin", "", "Denars", 1);
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Grass", "$grass$", "grass", "Grass", false);
+		AddRequirement(s.requirements, "coin", "", "Denars", 1);
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Bone", "$bone$", "bone", "Chicken bone", false);
+		AddRequirement(s.requirements, "coin", "", "Denars", 2);
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Oak tree seed", "$tree_bushy$", "tree_bushy", "Oak seed", false);
 		AddRequirement( s.requirements, "coin", "Oak seed", "Denars", 750 );
 		s.spawnNothing = true;
 	}
 	{	 
-		ShopItem@ s = addShopItem( this, "Pine tree seed", "$tree_pine$", "tree_pine", "Pine seed", false);
+		ShopItem@ s = addShopItem(this, "Pine tree seed", "$tree_pine$", "tree_pine", "Pine seed", false);
 		AddRequirement( s.requirements, "coin", "Pine seed", "Denars", 750 );
 		s.spawnNothing = true;
 	}
-	/*{
-		ShopItem@ s = addShopItem( this, "Grain seed", "$grain$", "-g", "Grain seed", false);
-		AddRequirement( s.requirements, "coin", "Grain seed", "Denars", 20);
-		s.spawnNothing = true;
-	}*/
 	{
-		ShopItem@ s = addShopItem( this, "Bush seed", "$bush$", "bush", "Bush seed", false);
+		ShopItem@ s = addShopItem(this, "Bush seed", "$bush$", "bush", "Bush seed", false);
 		AddRequirement( s.requirements, "coin", "Bush seed", "Denars", 5 );
 	}
 	{
-		ShopItem@ s = addShopItem( this, "Flowers seeds", "$flowers$", "flowers", "Flowers seeds", false);
+		ShopItem@ s = addShopItem(this, "Flowers seeds", "$flowers$", "flowers", "Flowers seeds", false);
 		AddRequirement( s.requirements, "coin", "Flowers seeds", "Denars", 10 );
 	}
 	
