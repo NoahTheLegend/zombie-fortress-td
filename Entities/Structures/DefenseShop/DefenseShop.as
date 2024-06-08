@@ -27,11 +27,11 @@ void onInit( CBlob@ this )
 
 	{
 		ShopItem@ s = addShopItem(this, "Bomb", "$bomb$", "mat_bombs", "Explosive bomb.", true);
-		AddRequirement(s.requirements, "coin", "", "Denars", 15);
+		AddRequirement(s.requirements, "coin", "", "Denars", 10);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Water Bomb", "$waterbomb$", "mat_waterbombs", "A bottle with water.", true);
-		AddRequirement(s.requirements, "coin", "", "Denars", 5);
+		AddRequirement(s.requirements, "coin", "", "Denars", 2);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Mine", getTeamIcon("mine", "Mine.png", 0, Vec2f(16, 16), 1), "mine", "Instant mine.", false);
@@ -39,7 +39,7 @@ void onInit( CBlob@ this )
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Keg", getTeamIcon("keg", "Keg.png", 0, Vec2f(16, 16), 0), "keg", "High-explosive barrel.", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 150);
+		AddRequirement(s.requirements, "coin", "", "Denars", 200);
 	}
 }
 

@@ -9,6 +9,9 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().removeIfTag = "dead";
 	this.Tag("medium weight");
 
+	this.set_f32("damage_resistance", 1);
+    this.set_f32("weakness", 1);
+
 	//default player minimap dot - not for migrants
 	//if (this.getName() != "migrant")
 	//{
@@ -100,6 +103,10 @@ bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
 // make Suicide ignore invincibility
 f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
 {
+	if (this.exists("damage_resistance"))
+	{
+		damage *= this.get_f32("damage_resistance");
+	}
 	if (this.hasTag("invincible") && customData == 11)
 		this.Untag("invincible");
 	return damage;

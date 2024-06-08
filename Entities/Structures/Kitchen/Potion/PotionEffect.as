@@ -8,10 +8,11 @@ void onTick(CBlob@ this)
 
 	if (!this.hasTag("potion_drunk"))
 	{
+        ResetVars(this);
 		this.Tag("potion_drunk");
 	}
 
-    u32 duration = this.get_u32("potion_duration"); 
+    u32 duration = this.get_u32("potion_duration");
     u8 type = this.get_u8("potion_effect");
     u8 tier = this.get_u8("potion_tier");
 
@@ -32,11 +33,7 @@ void onTick(CBlob@ this)
             moveVars.jumpFactor = 0.925f - factor/2;
             break;
         }
-        case 1: // empty, skip
-        {
-            break;
-        }
-        case 2: // poison
+        case 1: // poison
         {
             if (isServer() && (getGameTime()+this.getNetworkID()) % 30 == 0)
             {
@@ -44,17 +41,18 @@ void onTick(CBlob@ this)
             }
             break;
         }
-        case 3: // speed
+        case 2: // speed
         {
-            moveVars.walkFactor = 1.1f + 0.1f * tier;
+            f32 factor = 0.1f * tier;
+            moveVars.walkFactor = 1.1f + factor;
 
             break;
         }
-        case 4: // regen
+        case 3: // regen
         {
             f32 hp = this.getHealth();
             f32 init_hp = this.getInitialHealth();
-            if ((getGameTime()+this.getNetworkID()) % 30 == 0 && hp < init_hp)
+            if ((getGameTime()+this.getNetworkID()) % 15 == 0 && hp < init_hp)
             {
                 if (isServer())
                 {
@@ -67,10 +65,44 @@ void onTick(CBlob@ this)
             }
             break;
         }
+        case 4: // damage resistance
+        {
+            this.set_f32("damage_resistance", 1.0f - (0.111f + 0.111f * tier));
+            break;
+        }
+        case 5: // weakness
+        {
+            this.set_f32("weakness", 1.0f - (0.15f + 0.15f * tier));
+            break;
+        }
+        case 6: // sickness
+        {
+            if (isServer())
+            {
+                f32 hp = this.getHealth();
+                f32 init_hp = this.getInitialHealth() * (1.0f - (0.2f + 0.2f * tier));
+
+                if (hp > init_hp)
+                {
+                    f32 reduce_time = hp/init_hp * (5 * 30);
+                    this.set_u32("potion_duration", Maths::Max(0, int(this.get_u32("potion_duration")) - reduce_time));
+                    
+                    this.server_SetHealth(init_hp);
+                }
+            }
+        }
+        break;
     }
 
 	if (remove)
 	{
+        ResetVars(this);
 		this.RemoveScript("PotionEffect.as");
 	}
+}
+
+void ResetVars(CBlob@ this)
+{
+    this.set_f32("damage_resistance", 1);
+    this.set_f32("weakness", 1);
 }

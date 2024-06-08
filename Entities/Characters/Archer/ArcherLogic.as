@@ -283,10 +283,16 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 	CSprite@ sprite = this.getSprite();
 	bool ismyplayer = this.isMyPlayer();
 	bool hasarrow = archer.has_arrow || this.getPlayer() is null;
-	s8 charge_time = archer.charge_time;
+	s16 charge_time = archer.charge_time;
 	u8 charge_state = archer.charge_state;
 	const bool pressed_action2 = this.isKeyPressed(key_action2);
 	Vec2f pos = this.getPosition();
+
+	int _ready_time 	= ArcherParams::ready_time     / this.get_f32("weakness");
+	int _shoot_period 	= ArcherParams::shoot_period   / this.get_f32("weakness");
+	int _shoot_period_1 = ArcherParams::shoot_period_1 / this.get_f32("weakness");
+	int _shoot_period_2 = ArcherParams::shoot_period_2 / this.get_f32("weakness");
+	int _legolas_period = ArcherParams::legolas_period / this.get_f32("weakness");
 
 	if (ismyplayer)
 	{
@@ -357,7 +363,7 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 		{
 			ClientFire(this, charge_time, hasarrow, archer.arrow_type, true);
 			charge_state = ArcherParams::legolas_charging;
-			charge_time = ArcherParams::shoot_period - ArcherParams::legolas_charge_time;
+			charge_time = _shoot_period - ArcherParams::legolas_charge_time;
 			Sound::Play("FastBowPull.ogg", pos);
 			archer.legolas_arrows--;
 
@@ -444,7 +450,7 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 		{
 			charge_time++;
 
-			if (charge_time > ArcherParams::ready_time)
+			if (charge_time > _ready_time)
 			{
 				charge_time = 1;
 				charge_state = ArcherParams::charging;
@@ -461,7 +467,7 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 				Sound::Play("AnimeSword.ogg", pos, ismyplayer ? 1.3f : 0.7f);
 				Sound::Play("FastBowPull.ogg", pos);
 				charge_state = ArcherParams::legolas_charging;
-				charge_time = ArcherParams::shoot_period - ArcherParams::legolas_charge_time;
+				charge_time = _shoot_period - ArcherParams::legolas_charge_time;
 
 				archer.legolas_arrows = ArcherParams::legolas_arrows_count;
 				archer.legolas_time = ArcherParams::legolas_time;
@@ -472,7 +478,7 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 		}
 		else if (charge_state == ArcherParams::no_arrows)
 		{
-			if (charge_time < ArcherParams::ready_time)
+			if (charge_time < _ready_time)
 			{
 				charge_time++;
 			}
@@ -532,13 +538,13 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 			//	print("archer.charge_time " + archer.charge_time + " / " + ArcherParams::shoot_period );
 			if (archer.charge_state == ArcherParams::readying)
 			{
-				frame = 1 + float(archer.charge_time) / float(ArcherParams::shoot_period + ArcherParams::ready_time) * 7;
+				frame = 1 + float(archer.charge_time) / float(_shoot_period + _ready_time) * 7;
 			}
 			else if (archer.charge_state == ArcherParams::charging)
 			{
-				if (archer.charge_time <= ArcherParams::shoot_period)
+				if (archer.charge_time <= _shoot_period)
 				{
-					frame = float(ArcherParams::ready_time + archer.charge_time) / float(ArcherParams::shoot_period) * 7;
+					frame = float(_ready_time + archer.charge_time) / float(_ready_time) * 7;
 				}
 				else
 					frame = 9;
@@ -698,7 +704,7 @@ bool canSend(CBlob@ this)
 	return (this.isMyPlayer() || this.getPlayer() is null || this.getPlayer().isBot());
 }
 
-void ClientFire(CBlob@ this, const s8 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)
+void ClientFire(CBlob@ this, const s16 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)
 {
 	//time to fire!
 	if (hasarrow && canSend(this))  // client-logic

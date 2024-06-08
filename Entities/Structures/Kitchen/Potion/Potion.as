@@ -11,7 +11,7 @@ void onInit(CBlob@ this)
 	this.set_u8("tier", 0);
 	this.set_u8("effect", 0);
 
-	this.getCurrentScript().tickFrequency = 30;
+	this.getCurrentScript().tickFrequency = 3;
 
 	Update(this);
 }

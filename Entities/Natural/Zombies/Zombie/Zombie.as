@@ -407,7 +407,7 @@ bool isBoulderHitter(u8 data)
 }
 
 f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
-{		
+{
 	MadAt( this, hitterBlob );
 
 	if (isExplosionHitter(customData) || isBoulderHitter(customData))
