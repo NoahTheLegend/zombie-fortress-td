@@ -77,9 +77,6 @@ bool isKnockable(CBlob@ blob)
 
 void SetKnocked(CBlob@ blob, int ticks, bool sync = false)
 {
-	if (ticks != 0)
-		return; //do nothing
-
 	blob.set_u8("knocked", Maths::Min(255, Maths::Max(blob.get_u8("knocked"), ticks)));
 	if (sync)
 	{
