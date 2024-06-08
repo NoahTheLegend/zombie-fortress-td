@@ -96,13 +96,13 @@ void onTick( CBlob@ this)
 		if (blobs.length == 0) return;
 
 		CBlob@[] zambies;
-		getMap().getBlobsInRadius( this.getPosition(), 128, @zambies );
+		getMap().getBlobsInRadius( this.getPosition(), 256, @zambies );
 		int zombies = 0;
 		for (u16 i = 0; i < zambies.length; i++)
 		{
 			if (zambies[i] !is null && zambies[i].hasTag("zombie")) zombies++;
 		}
-		if (zombies > 16+(getPlayersCount()*1.5f)) return;
+		if (zombies > 16+getPlayersCount()*1.5f) return;
 		
 			Vec2f sp = this.getPosition();
 			
