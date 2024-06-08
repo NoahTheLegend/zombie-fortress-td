@@ -233,7 +233,7 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 			bool visible = enemy !is null && !getMap().rayCastSolidNoBlobs(pos, enemy.getPosition());
 			if (visible)
 			{
-				if (retreating == 0)
+				if (retreating == 0 && !getMap().rayCastSolid(pos, enemy.getPosition()))
 				{
 					AttackBlobArcher(blob, latest_enemy);
 					if (XORRandom(80) == 0)
