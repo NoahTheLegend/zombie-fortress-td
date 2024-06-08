@@ -42,7 +42,7 @@ void Config(ZombiesCore@ this)
 	getRules().set_bool("gold_structures", gold_structures);
 	
 	s32 max_zombies = cfg.read_s32("game_time",125);
-	max_zombies = 180 + getPlayersCount() * 10;
+	max_zombies = 150 + getPlayersCount() * 10;
 	getRules().set_s32("max_zombies", max_zombies);
 	getRules().set_bool("scrolls_spawn", scrolls_spawn);
 	getRules().set_bool("techstuff_spawn", techstuff_spawn);
@@ -379,7 +379,7 @@ shared class ZombiesCore : RulesCore
 		if (map.getDayTime() > 0.3f && map.getDayTime() < 0.75f)
 		{				
 			f32 mod = Maths::Log(dayNumber)+Maths::Min(10, dayNumber);
-			rules.set_f32("pool", base_pool + (getPlayersCount()*1.5f) * (day_pool+XORRandom(day_pool)) * mod);
+			rules.set_f32("pool", base_pool + (getPlayersCount() * (day_pool+XORRandom(day_pool)) * mod));
 		}
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) { rules.SetCurrentState(GAME);}
@@ -615,7 +615,7 @@ void Reset(CRules@ this)
 	int day_cycle = getRules().daycycle_speed*60;			
 	int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
 
-	f32 mod = Maths::Log(dayNumber)+Maths::Min(10 + (getPlayersCount() * 2), dayNumber);
+	f32 mod = Maths::Log(dayNumber)+Maths::Min(10 + getPlayersCount()*2, dayNumber);
 	this.set_f32("pool", base_pool + getPlayersCount()/2 * (day_pool+XORRandom(day_pool)) * mod);
 
     printf("Restarting rules script: " + getCurrentScriptName() );
