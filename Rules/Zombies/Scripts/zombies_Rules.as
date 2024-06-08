@@ -10,7 +10,7 @@
 #include "MigrantCommon.as";
 
 const int base_pool = 1500;
-const int day_pool = 100;
+const int day_pool = 75;
 
 //simple config function - edit the variables below to change the basics
 
