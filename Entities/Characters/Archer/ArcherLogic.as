@@ -281,7 +281,7 @@ void ManageGrapple(CBlob@ this, ArcherInfo@ archer)
 void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 {
 	CSprite@ sprite = this.getSprite();
-	bool ismyplayer = this.isMyPlayer();
+	bool ismyplayer = canSend(this);
 	bool hasarrow = archer.has_arrow || this.getPlayer() is null;
 	s16 charge_time = archer.charge_time;
 	u8 charge_state = archer.charge_state;
@@ -333,6 +333,7 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 			charge_state = ArcherParams::legolas_ready;
 		}
 	}
+
 	//charged - no else (we want to check the very same tick)
 	if (charge_state == ArcherParams::legolas_ready) // fast arrows
 	{
@@ -611,8 +612,6 @@ void onTick(CBlob@ this)
 	ManageGrapple(this, archer);
 
 	// vvvvvvvvvvvvvv CLIENT-SIDE ONLY vvvvvvvvvvvvvvvvvvv
-
-	if (!getNet().isClient()) return;
 
 	if (this.isInInventory()) return;
 

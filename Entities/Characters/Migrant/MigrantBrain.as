@@ -76,7 +76,7 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 				if (b is null || b is blob) continue;
 				bool raycast = map.rayCastSolidNoBlobs(blob.getPosition(), b.getPosition());
 
-				if (!raycast && b.getDistanceTo(blob) < 32.0f && b.hasTag("crystal"))
+				if (!raycast && b.getDistanceTo(blob) < 24.0f && b.hasTag("crystal"))
 				{
 					if (find_crystal) SetStrategy(blob, FStrategy::idle);
 					near_crystal = true;
@@ -334,7 +334,7 @@ void MigrantTick(CBrain@ this, CBlob@ blob)
 					enemy_pos = b.getPosition();
 					has_zombie = true;
 				}
-				if (b.hasTag("crystal"))
+				if (b.hasTag("crystal") && blob.getDistanceTo(b) < 24.0f)
 				{
 					if (strategy == Strategy::find_crystal) SetStrategy(blob, Strategy::idle);
 					near_crystal = true;
