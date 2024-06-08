@@ -701,7 +701,7 @@ bool shouldReleaseGrapple(CBlob@ this, ArcherInfo@ archer, CMap@ map)
 
 bool canSend(CBlob@ this)
 {
-	return (this.isMyPlayer() || this.getPlayer() is null || this.getPlayer().isBot());
+	return (this.isMyPlayer() || ((this.getPlayer() is null || this.getPlayer().isBot()) && isServer()));
 }
 
 void ClientFire(CBlob@ this, const s16 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)

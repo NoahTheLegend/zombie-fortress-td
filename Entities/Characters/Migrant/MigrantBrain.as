@@ -201,7 +201,7 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 		else
 		{
 			bool visible = enemy !is null && !getMap().rayCastSolidNoBlobs(pos, enemy.getPosition());
-			if (visible && enemy !is null && blob.getDistanceTo(enemy) < 32.0f)
+			if (visible && enemy !is null && blob.getDistanceTo(enemy) < 24.0f)
 			{
 				bool go_right = enemy.getPosition().x < pos.x;
 				blob.setKeyPressed(go_right ? key_right : key_left, true);
