@@ -48,6 +48,7 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 	u8 strategy = delay == 0 ? blob.get_u8("strategy") : FStrategy::idle;
 	CBlob@ enemy = null;
 	CBlob@ nearest_ally = null;
+	bool near_crystal = false;
 
 	bool idle = strategy == FStrategy::idle;
 	bool follow = strategy == FStrategy::follow;
@@ -74,6 +75,12 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 				CBlob@ b = bs[i];
 				if (b is null || b is blob) continue;
 				bool raycast = map.rayCastSolidNoBlobs(blob.getPosition(), b.getPosition());
+
+				if (!raycast && b.getDistanceTo(blob) < 32.0f && b.hasTag("crystal"))
+				{
+					if (find_crystal) SetStrategy(blob, FStrategy::idle);
+					near_crystal = true;
+				}
 				
 				if (b.hasTag("player"))
 				{
@@ -328,7 +335,10 @@ void MigrantTick(CBrain@ this, CBlob@ blob)
 					has_zombie = true;
 				}
 				if (b.hasTag("crystal"))
+				{
+					if (strategy == Strategy::find_crystal) SetStrategy(blob, Strategy::idle);
 					near_crystal = true;
+				}
 
 				if (has_player && has_zombie)
 					break;

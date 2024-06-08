@@ -334,7 +334,7 @@ shared class ZombiesSpawns : RespawnSystem
 };
 
 const u8 bots_per_player = 2;
-const u8 max_bots = 18;
+const u8 max_bots = 16;
 
 shared class ZombiesCore : RulesCore
 {
@@ -379,7 +379,7 @@ shared class ZombiesCore : RulesCore
 		if (map.getDayTime() > 0.3f && map.getDayTime() < 0.75f)
 		{				
 			f32 mod = Maths::Log(dayNumber)+Maths::Min(10, dayNumber);
-			rules.set_f32("pool", base_pool + getPlayersCount()/2 * (day_pool+XORRandom(day_pool)) * mod);
+			rules.set_f32("pool", base_pool + (getPlayersCount()*1.5f) * (day_pool+XORRandom(day_pool)) * mod);
 		}
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) { rules.SetCurrentState(GAME);}
@@ -401,7 +401,7 @@ shared class ZombiesCore : RulesCore
 			//printf("Zombies: "+num_zombies+" Extra: "+extra_zombies);			
 		}
 			
-	    if (getGameTime() % (spawnRate) == 0 && num_zombies<100+extra_zombies)
+	    if (getGameTime() % (spawnRate) == 0 && num_zombies<300)
         {
 			CMap@ map = getMap();
 			if (map !is null)
