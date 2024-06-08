@@ -64,7 +64,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 
 		caller.Untag("potion_drunk");
 
-		caller.set_u32("potion_duration", getGameTime() + (20 + 20*this.get_u8("tier"))*30);
+		caller.set_u32("potion_duration", getGameTime() + (30 + 30*this.get_u8("tier"))*30);
 		caller.set_u8("potion_effect", this.get_u8("effect"));
 		caller.set_u8("potion_tier", this.get_u8("tier"));
 		
