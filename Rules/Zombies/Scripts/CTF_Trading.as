@@ -185,6 +185,10 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 				{
 					g.params.ResetBitIndex();
 					string name = g.params.read_string();
+					if (name == "stone_door")
+					{
+						coins = coinsOnBuildStoneDoor;
+					}
 				}
 
 				break;
