@@ -34,7 +34,7 @@ void onInit(CBlob@ this)
 void CreatePotion(CBlob@ this, string[] components)
 {
 	if (!isServer()) return;
-	if (components.size() != pool_components.size()) return;
+	if (components.size() != potion_size) return;
 
 	string[] crafts;
 	string[][] recipes;
@@ -190,7 +190,7 @@ void AddComponent(CBlob@ this, string component)
 	this.set("components", components);
 	//if (isServer()) printf(component+": added component, total: "+components.size());
 
-	if (components.size() >= pool_components.size())
+	if (components.size() >= potion_size)
 	{
 		CreatePotion(this, components);
 		string[] empty;
@@ -216,7 +216,7 @@ void OpenMenu(CBlob@ this, CBlob@ caller)
 		CGridButton@ button3 = menu.AddButton("$"+items[2]+"$", "Add component", this.getCommandID("add3"), Vec2f(1, 1), params);
 		CGridButton@ button4 = menu.AddButton("$"+items[3]+"$", "Add component", this.getCommandID("add4"), Vec2f(1, 1), params);
 		
-		for (u8 i = 0; i < pool_components.size(); i++)
+		for (u8 i = 0; i < potion_size; i++)
 		{
 			CGridButton@ button;
 			if (i == 0) @button = @button1;
@@ -266,7 +266,7 @@ void Shuffle(CBlob@ this, string[] &out crafts, string[][] &out recipes)
         }
 
 		generatedRecipes.push_back(recipe);
-        //if (isServer()) printf("RECIPE: " + srecipe);
+        if (isServer()) printf("RECIPE: " + srecipe);
     }
 
     recipes = generatedRecipes;

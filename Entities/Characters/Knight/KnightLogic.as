@@ -113,6 +113,12 @@ void onTick(CBlob@ this)
 	if (this.isInInventory())
 		return;
 
+	if (isServer() && this.getPlayer() is null && !this.hasTag("dead")
+		&& (getGameTime()+this.getNetworkID())%90==0 && this.getHealth() < this.getInitialHealth())
+    {
+        this.server_Heal(Maths::Min(this.getInitialHealth() - this.getHealth(), 1.0f));
+    }
+
 	//knight logic stuff
 	//get the vars to turn various other scripts on/off
 	RunnerMoveVars@ moveVars;
@@ -688,7 +694,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		u8 strategy = (params.read_u8()+1) % FStrategy::sum;
 		u16 id = params.read_u16();
 
-		this.set_u32("switch_button_delay", getGameTime()+5);
+		this.set_u32("switch_button_delay", getGameTime()+1);
 
 		switch(strategy)
 		{
@@ -801,7 +807,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 			description = "\nFollow me";
 			break;
 		}
-		case FStrategy::follow:
+		case FStrategy::defend:
 		{
 			icon = "$fighter_find_crystal$";
 			description = "\nGo to crystal";
@@ -813,7 +819,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 			description = "\nDefend me";
 			break;
 		}
-		case FStrategy::defend:
+		case FStrategy::follow:
 		{
 			icon = "$fighter_idle$";
 			description = "\nStay here";

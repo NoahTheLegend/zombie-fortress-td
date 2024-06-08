@@ -80,11 +80,12 @@ void onInit( CBlob@ this )
 	}
 	{
 		ShopItem@ s = addShopItem( this, "Nursery", "$nursery$", "nursery", "You can buy herbs and potion ingredients here." );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 350);
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 250);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Kitchen", "$kitchen$", "kitchen", "Brew a potion with a hidden effect.\nNOTE: Recipes differ in different worlds!");
-		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 350);
+		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 250);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 250);
 	}
 }
 

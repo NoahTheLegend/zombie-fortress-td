@@ -67,25 +67,36 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 		if (map !is null)
 		{
 			f32 enemy_dist = 999.0f;
-			map.getBlobsInRadius(blob.getPosition(), archer ? 256.0f : 128.0f, @bs);
+			f32 ally_dist = 999.0f;
+			map.getBlobsInRadius(blob.getPosition(), archer ? 256.0f : 96.0f, @bs);
 			for (u16 i = 0; i < bs.size(); i++)
 			{
 				CBlob@ b = bs[i];
 				if (b is null || b is blob) continue;
-
-				bool raycast = map.rayCastSolid(blob.getPosition(), b.getPosition());
-				if (raycast) continue;
-
+				bool raycast = map.rayCastSolidNoBlobs(blob.getPosition(), b.getPosition());
+				
 				if (b.hasTag("player"))
 				{
+					f32 temp_ally_dist = b.getDistanceTo(blob);
+					if (raycast && temp_ally_dist > 48.0f) continue;
+
+					ally_dist = temp_ally_dist;
 					@nearest_ally = @b;
 				}
 
-				f32 temp_enemy_dist = b.getDistanceTo(blob);
-				if (b.hasTag("zombie") && temp_enemy_dist < enemy_dist)
+				if (b.hasTag("zombie") || (b.getName() == "ZombiePortal" && !archer))
 				{
-					enemy_dist = temp_enemy_dist;
-					@enemy = @b;
+					f32 temp_enemy_dist = b.getDistanceTo(blob);
+					if (raycast && temp_enemy_dist > 32.0f) continue;
+
+					bool wraith = (b.getName() == "Wraith" && temp_enemy_dist < 64.0f);
+					if (temp_enemy_dist < enemy_dist || wraith)
+					{
+						printf(""+wraith);
+						if (wraith) blob.set_u32("shield time", getGameTime());
+						enemy_dist = temp_enemy_dist;
+						@enemy = @b;
+					}
 				}
 			}
 		}
@@ -133,7 +144,7 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 				this.SetTarget(target);
 			}
 
-			if (!find_crystal)
+			if (!find_crystal && enemy is null)
 			{
 				const bool stuck = this.getState() == CBrain::stuck;
 				if (!stuck) // retreat back to ally or order pos
@@ -145,7 +156,7 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 					}
 					else if (follow && blob.getDistanceTo(target) > 96.0f)
 					{
-						blob.set_u16("retreating", 75);
+						blob.set_u16("retreating", 60);
 						GoToBlob(this, target);
 					}
 				}
@@ -163,7 +174,7 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 				GoToBlob(this, target);
 			}
 
-			blob.set_u16("attack_id", enemy is null || !enemy.hasTag("zombie") ? 0 : enemy.getNetworkID());
+			blob.set_u16("attack_id", enemy !is null && (enemy.hasTag("zombie") || enemy.getName() == "ZombiePortal") ? enemy.getNetworkID() : 0);
 			if (target !is null)
 			{
 				const int state = this.getState();
@@ -190,7 +201,7 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 		}
 		else
 		{
-			bool visible = enemy !is null && !getMap().rayCastSolid(pos, enemy.getPosition());
+			bool visible = enemy !is null && !getMap().rayCastSolidNoBlobs(pos, enemy.getPosition());
 			if (visible && enemy !is null && blob.getDistanceTo(enemy) < 32.0f)
 			{
 				bool go_right = enemy.getPosition().x < pos.x;
@@ -213,11 +224,17 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 	{
 		if (blob.getName() == "archer")
 		{
-			bool visible = enemy !is null && !getMap().rayCastSolid(pos, enemy.getPosition());
+			bool visible = enemy !is null && !getMap().rayCastSolidNoBlobs(pos, enemy.getPosition());
 			if (visible)
 			{
-				if (retreating == 0 || defend)
+				if (retreating == 0)
+				{
 					AttackBlobArcher(blob, latest_enemy);
+					if (XORRandom(80) == 0)
+					{
+						set_emote(blob, Emotes::mad, 75);
+					}
+				}
 
 				if (blob.getDistanceTo(latest_enemy) < 40.0f)
 				{
@@ -225,15 +242,24 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 					blob.setKeyPressed(go_right ? key_right : key_left, true);
 					blob.set_u32("shield time", getGameTime());
 					JumpOverObstacles(blob, pos + Vec2f(go_right ? 32.0f : -32.0f, -32.0f));
+
+					if (XORRandom(30) == 0)
+					{
+						set_emote(blob, Emotes::attn, 75);
+					}
 				}
 			}
 		}
 		else
 		{
-			if (retreating > 0)
-				blob.set_u32("shield time", getGameTime());
-			if (retreating == 0 || defend)
+			if (retreating == 0)
+			{
 				AttackBlobKnight(blob, latest_enemy);
+				if (XORRandom(80) == 0)
+				{
+					set_emote(blob, Emotes::mad, 75);
+				}
+			}
 		}
 	}
 
@@ -289,7 +315,7 @@ void MigrantTick(CBrain@ this, CBlob@ blob)
 				CBlob@ b = bs[i];
 				if (b is null || b is blob) continue;
 
-				bool raycast = map.rayCastSolid(blob.getPosition(), b.getPosition());
+				bool raycast = map.rayCastSolidNoBlobs(blob.getPosition(), b.getPosition());
 				if (raycast) continue;
 
 				if (b.hasTag("player"))
@@ -413,7 +439,7 @@ void MigrantTick(CBrain@ this, CBlob@ blob)
 
 void Repath(CBrain@ this, Vec2f force_pos = Vec2f_zero)
 {
-	if (this.getTarget() !is null && force_pos != Vec2f_zero) return;
+	if (this.getTarget() is null && force_pos == Vec2f_zero) return;
 	this.SetPathTo(force_pos == Vec2f_zero ? this.getTarget().getPosition() : force_pos, false);
 }
 
@@ -425,7 +451,7 @@ void GoToBlob(CBrain@ this, CBlob@ target, Vec2f force_pos = Vec2f_zero)
 	Vec2f targetpos = force_pos == Vec2f_zero && target !is null ? target.getPosition() : force_pos;
 	u8 strategy = blob.get_u8("strategy");
 
-	bool visible = !getMap().rayCastSolid(pos, targetpos);
+	bool visible = !getMap().rayCastSolidNoBlobs(pos, targetpos);
 	f32 dist = force_pos == Vec2f_zero && target !is null ? blob.getDistanceTo(target) : (pos-force_pos).Length();
 	bool go_directly = visible && dist < 96.0f;
 
@@ -450,8 +476,8 @@ void Controls(CBrain@ this, CBlob@ blob, CBlob@ target, Vec2f to, Vec2f targetVe
 		justGo = true;
 
 	// repath if no clear path after going at it
-	if ((!justGo && blob.get_bool("justgo"))
-		|| ((pos-to).Length() < 16.0f && XORRandom(15) == 0))
+	if (((!justGo && blob.get_bool("justgo"))
+		|| ((pos-to).Length() < 16.0f && XORRandom(15) == 0)))
 	{
 		Repath(this);
 	}

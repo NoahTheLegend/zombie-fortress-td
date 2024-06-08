@@ -27,19 +27,19 @@ void onInit(CBlob@ this)
 	this.set_u8("shop icon", 12);
 	{
 		ShopItem@ s = addShopItem(this, "Wood", "$mat_wood$", "mat_wood", "Transform coins into wood planks.", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 30);
+		AddRequirement(s.requirements, "coin", "", "Denars", 25);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Stone", "$mat_stone$", "mat_stone", "Transform coins rocks.", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 75);
+		AddRequirement(s.requirements, "coin", "", "Denars", 50);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Gold", "$mat_gold$", "mat_gold", "Transform coins into gold ingots.", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 150);
+		AddRequirement(s.requirements, "coin", "", "Denars", 100);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Scroll of Drought", "$scroll_drought$", "scroll_drought", "Evaporate nearby water.", false);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 50);
+		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 25);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Scroll of Resurrection", "$scroll_revive$", "scroll_revive", "Resurrect two of dead dwarves to help you.", false);

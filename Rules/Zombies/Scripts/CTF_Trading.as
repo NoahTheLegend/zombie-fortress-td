@@ -2,25 +2,33 @@
 
 #include "GameplayEvents.as"
 
-const int coinsOnDamageAdd = 5;
-const int coinsOnKillAdd = 10;
+const int coinsOnDamageAdd = 0;
+const int coinsOnAssistAdd = 0;
+const int coinsOnKillAdd = 0;
 
-const int coinsOnDeathLosePercent = 20;
-const int coinsOnTKLose = 50;
+// bonus for being an offensive builder
+const int coinsOnDamageAddBuilder = 0;
+const int coinsOnAssistAddBuilder = 0;
+const int coinsOnKillAddBuilder = 0;
+
+const int coinsOnDeathLosePercent = 0;
 
 const int coinsOnRestartAdd = 0;
 const bool keepCoinsOnRestart = false;
 
-const int coinsOnHitSiege = 5;
-const int coinsOnKillSiege = 20;
+const int coinsOnHitSiege = 0; //per heart of damage
+const int coinsOnKillSiege = 0;
 
-const int coinsOnCapFlag = 100;
+const int coinsOnCapFlag = 0;
 
-const int coinsOnBuild = 3;
-const int coinsOnBuildWood = 1;
-const int coinsOnBuildWorkshop = 6;
+const int coinsOnBuildStoneBlock = 1;
+const int coinsOnBuildStoneDoor = 2;
+const int coinsOnBuildWood = 0;
+const int coinsOnBuildWorkshop = 0;
 
-const int warmupFactor = 3;
+const int warmupFactor = 1;
+
+const f32 killstreakFactor = 1.0f;
 
 string[] names;
 
@@ -71,6 +79,7 @@ void onRestart(CRules@ this)
 
 void onInit(CRules@ this)
 {
+	this.addCommandID(game_event_id);
 	Reset(this);
 }
 
@@ -101,10 +110,6 @@ void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ killer, u8 customData)
 			if (killer !is victim && killer.getTeamNum() != victim.getTeamNum())
 			{
 				killer.server_setCoins(killer.getCoins() + coinsOnKillAdd);
-			}
-			else if (killer.getTeamNum() == victim.getTeamNum())
-			{
-				killer.server_setCoins(killer.getCoins() - coinsOnTKLose);
 			}
 		}
 
@@ -160,13 +165,12 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 			switch (g.getType())
 			{
 				case GE_built_block:
-
 				{
 					g.params.ResetBitIndex();
 					u16 tile = g.params.read_u16();
 					if (tile == CMap::tile_castle)
 					{
-						coins = coinsOnBuild;
+						coins = coinsOnBuildStoneBlock;
 					}
 					else if (tile == CMap::tile_wood)
 					{
@@ -181,32 +185,6 @@ void onCommand(CRules@ this, u8 cmd, CBitStream @params)
 				{
 					g.params.ResetBitIndex();
 					string name = g.params.read_string();
-
-					if (name.findFirst("door") != -1 ||
-					        name == "wooden_platform" ||
-					        name == "trap_block" ||
-							name == "team_bridge" ||
-							name == "fire_trap_block" ||
-							name == "explosive_trap" ||
-							name == "lamp_block" ||
-							name == "booster" ||
-							name == "spiker" ||
-							name == "flamer" ||
-							name == "obstructor" ||
-							name == "dispenser" ||
-							name == "bolter" ||
-							name == "magazine" ||
-							name == "receiver" ||
-							name == "emitter" ||
-							name == "lamp" ||
-					        name == "spikes")
-					{
-						coins = coinsOnBuild;
-					}
-					else if (name == "building")
-					{
-						coins = coinsOnBuildWorkshop;
-					}
 				}
 
 				break;

@@ -18,9 +18,9 @@ namespace FStrategy
 	enum strats
 	{
 		idle = 0,
-		follow,
-		find_crystal,
 		defend,
+		find_crystal,
+		follow,
 		sum
 	}
 };
@@ -33,7 +33,7 @@ void SetStrategy(CBlob@ blob, const u8 strategy)
 {
 	if (!isServer()) return;
 
-	blob.set_u8("strategy_delay", 30);
+	blob.set_u8("strategy_delay", 45);
 	blob.set_Vec2f("last_order_pos", blob.getPosition());
 
 	blob.set_bool("changed_strategy", true);
@@ -214,7 +214,7 @@ void AttackBlobArcher(CBlob@ blob, CBlob @target)
 		if (!fireTime && (fTime == 0 || XORRandom(10) == 0))
 		{
 			const f32 vert_dist = Maths::Abs(targetPos.y - mypos.y);
-			const u32 shootTime = ArcherParams::ready_time*2;
+			const u32 shootTime = ArcherParams::ready_time*1.5f;
 			blob.set_u32("fire time", gametime + shootTime);
 		}
 

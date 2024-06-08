@@ -176,28 +176,29 @@ void onTick(CBlob@ this)
 		moveVars.jumpFactor *= 0.5f;
 		moveVars.walkFactor *= 0.4f;
 
-		CBlob@ projectile = server_CreateBlob("boulder",-1,this.getPosition()+Vec2f((this.isFacingLeft() ? -8 : 8),-4));
 		makeSmokeParticle(this.getPosition() + getRandomVelocity(90.0f, 3.0f, 360.0f));
-
 		SetKnocked(this, 45);
-
 		Sound::Play("CatapultFire", this.getPosition());
 		Sound::Play("/ArgLong", this.getPosition());
 
-		if(projectile !is null)
+		if (isServer())
 		{
-			Vec2f vel((this.isFacingLeft() ? -8.0f : 8.0f), -3.0f);
-			projectile.setVelocity(vel * 1.2);
-			projectile.server_SetTimeToDie(2.0f);
-			projectile.server_setTeamNum(this.getTeamNum());
-
-			CPlayer@ player = this.getPlayer();
-			if (player !is null)
+			CBlob@ projectile = server_CreateBlob("boulder",-1,this.getPosition()+Vec2f((this.isFacingLeft() ? -8 : 8),-4));
+		
+			if(projectile !is null)
 			{
-				projectile.SetDamageOwnerPlayer(player);
+				Vec2f vel((this.isFacingLeft() ? -8.0f : 8.0f), -3.0f);
+				projectile.setVelocity(vel * 1.2);
+				projectile.server_SetTimeToDie(2.0f);
+				projectile.server_setTeamNum(this.getTeamNum());
+
+				CPlayer@ player = this.getPlayer();
+				if (player !is null)
+				{
+					projectile.SetDamageOwnerPlayer(player);
+				}
 			}
 		}
-		// =--------------------=
 	}
 	else if ((pressed_a1 || swordState) && !moveVars.wallsliding)   //no attacking during a slide
 	{

@@ -91,13 +91,16 @@ void Blend( CBlob@ this, CBlob@ tobeblended )
 	}
 
 	//make plankfrom wooden stuff
-	if ( tobeblended.getName() == "log" )
+	if (tobeblended.getName() == "log" )
 	{
-		CBlob @wood = server_CreateBlob( "mat_wood", this.getTeamNum(), this.getPosition() + Vec2f(0,12) );	
-		if (wood !is null)
+		if (isServer())
 		{
-			wood.server_SetQuantity( (tobeblended.getHealth() / 0.014f) + 1 );
-			wood.setVelocity( Vec2f(0, -4.0f) );
+			CBlob @wood = server_CreateBlob( "mat_wood", this.getTeamNum(), this.getPosition() + Vec2f(0,12) );	
+			if (wood !is null)
+			{
+				wood.server_SetQuantity( (tobeblended.getHealth() / 0.014f) + 1 );
+				wood.setVelocity( Vec2f(0, -4.0f) );
+			}
 		}
 
 		this.getSprite().PlaySound( "SawLog.ogg" );

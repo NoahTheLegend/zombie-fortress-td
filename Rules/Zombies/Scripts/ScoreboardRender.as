@@ -451,7 +451,7 @@ float drawScoreboard(CPlayer@ localplayer, CPlayer@[] players, Vec2f topleft, CT
 		GUI::DrawText("" + p.getKills(), Vec2f(bottomright.x - 260 - offsetx, topleft.y), SColor(0xffffffff));
 		GUI::DrawText("" + p.getDeaths(), Vec2f(bottomright.x - 190 - offsetx, topleft.y), SColor(0xffffffff));
 		GUI::DrawText("" + p.getAssists(), Vec2f(bottomright.x - 130 - offsetx, topleft.y), SColor(0xffffffff));
-		GUI::DrawText("" + formatFloat(getKDR(p), "", 0, 2), Vec2f(bottomright.x - 70, topleft.y), SColor(0xffffffff));
+		GUI::DrawText("" + formatFloat(getKDR(p)*0.1f, "", 0, 2), Vec2f(bottomright.x - 70, topleft.y), SColor(0xffffffff));
 	}
 
 	// username copied text, goes at bottom to overlay above everything else

@@ -95,7 +95,7 @@ void onTick(CBlob@ this)
     if (!this.exists("init_pos")) this.set_Vec2f("init_pos", this.getPosition());
     else this.setPosition(this.get_Vec2f("init_pos") + Vec2f(0, -Maths::Sin(gt*0.015f)*5.0f));
 
-    if ((getGameTime()+this.getNetworkID())%90==0)
+    if ((getGameTime()+this.getNetworkID())%60==0)
     {
         CBlob@[] bs;
         getMap().getBlobsInRadius(this.getPosition()+Vec2f(0,8), 32.0f, @bs);
@@ -124,27 +124,27 @@ void onTick(CBlob@ this)
         Animation@ shiny = sprite.animation;
         if (shiny is null) return;
         
-        this.SetLightRadius(light_radius);
-        this.SetLight(true);
-
+        //this.SetLightRadius(light_radius);
+        //this.SetLight(true);
+//
         u16 netid = this.getNetworkID();
-        if ((gt+netid) % gradient_freq == 0)
-        {
-            shiny.frame += 3;
-
-            CFileImage@ image = CFileImage(sprite.getConsts().filename);
-
-		    if (image.isLoaded())
-		    {
-		    	image.setPixelOffset(this.get_u32("light_breakpoint") + shiny.frame*48);
-                SColor color = image.readPixel();
-                this.SetLightColor(color);
-
-                #ifndef STAGING
-                if (getMap() !is null) getMap().UpdateLightingAtPosition(this.getPosition(), light_radius);
-                #endif
-            }
-        }
+        //if ((gt+netid) % gradient_freq == 0)
+        //{
+        //    shiny.frame += 3;
+//
+        //    CFileImage@ image = CFileImage(sprite.getConsts().filename);
+//
+		//    if (image.isLoaded())
+		//    {
+		//    	image.setPixelOffset(this.get_u32("light_breakpoint") + shiny.frame*48);
+        //        SColor color = image.readPixel();
+        //        this.SetLightColor(color);
+//
+        //        #ifndef STAGING
+        //        if (getMap() !is null) getMap().UpdateLightingAtPosition(this.getPosition(), light_radius);
+        //        #endif
+        //    }
+        //}
         if (shiny.frame > shiny.getFramesCount()) shiny.frame = shiny.frame % shiny.getFramesCount();
 
         u8 shine_step = shiny.frame % 3;
