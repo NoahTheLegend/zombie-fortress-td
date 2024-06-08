@@ -58,10 +58,6 @@ void onTick(CBlob@ this)
                 {
                     this.server_Heal(Maths::Min(0.1f, init_hp-hp));
                 }
-                else
-                {
-                    this.getSprite().PlaySound("Heart.ogg", 0.33f, 1.25f + XORRandom(11)*0.01f);
-                }
             }
             break;
         }
