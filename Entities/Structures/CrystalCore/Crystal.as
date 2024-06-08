@@ -105,10 +105,6 @@ void onTick(CBlob@ this)
             if (b is null || !b.hasTag("player") || b.getPlayer() !is null) continue;
             if (b.getHealth() == b.getInitialHealth()) continue;
 
-            if (isClient())
-            {
-                this.getSprite().PlaySound("Heart.ogg");
-            }
             if (isServer() && b.getHealth() < b.getInitialHealth())
             {
                 b.server_Heal(Maths::Min(b.getInitialHealth() - b.getHealth(), 1.0f));
