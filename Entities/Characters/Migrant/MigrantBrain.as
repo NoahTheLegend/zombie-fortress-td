@@ -92,7 +92,6 @@ void FighterTick(CBrain@ this, CBlob@ blob)
 					bool wraith = (b.getName() == "Wraith" && temp_enemy_dist < 64.0f);
 					if (temp_enemy_dist < enemy_dist || wraith)
 					{
-						printf(""+wraith);
 						if (wraith) blob.set_u32("shield time", getGameTime());
 						enemy_dist = temp_enemy_dist;
 						@enemy = @b;
