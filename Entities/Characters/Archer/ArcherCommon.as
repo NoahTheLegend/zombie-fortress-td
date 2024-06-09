@@ -54,7 +54,7 @@ namespace ArrowType
 
 shared class ArcherInfo
 {
-	s16 charge_time;
+	s8 charge_time;
 	u8 charge_state;
 	bool has_arrow;
 	u8 stab_delay;

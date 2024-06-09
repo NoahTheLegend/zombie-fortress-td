@@ -283,7 +283,7 @@ void ManageBow(CBlob@ this, ArcherInfo@ archer, RunnerMoveVars@ moveVars)
 	CSprite@ sprite = this.getSprite();
 	bool ismyplayer = canSend(this);
 	bool hasarrow = archer.has_arrow || this.getPlayer() is null;
-	s16 charge_time = archer.charge_time;
+	s8 charge_time = archer.charge_time;
 	u8 charge_state = archer.charge_state;
 	const bool pressed_action2 = this.isKeyPressed(key_action2);
 	Vec2f pos = this.getPosition();
@@ -703,7 +703,7 @@ bool canSend(CBlob@ this)
 	return (this.isMyPlayer() || ((this.getPlayer() is null || this.getPlayer().isBot()) && isServer()));
 }
 
-void ClientFire(CBlob@ this, const s16 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)
+void ClientFire(CBlob@ this, const s8 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)
 {
 	//time to fire!
 	if (hasarrow && canSend(this))  // client-logic
