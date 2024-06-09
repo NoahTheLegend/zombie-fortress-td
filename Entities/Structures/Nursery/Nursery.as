@@ -29,19 +29,19 @@ void onInit( CBlob@ this )
 
 	{
 		ShopItem@ s = addShopItem(this, "Wheat", "$wheatbunch$", "wheatbunch", "Bunch of Wheat", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 3);
+		AddRequirement(s.requirements, "coin", "", "Denars", 1);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Nut", "$nut$", "nut", "Nut", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 2);
+		AddRequirement(s.requirements, "coin", "", "Denars", 1);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Grass", "$grass$", "grass", "Grass", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 2);
+		AddRequirement(s.requirements, "coin", "", "Denars", 1);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Bone", "$bone$", "bone", "Chicken bone", false);
-		AddRequirement(s.requirements, "coin", "", "Denars", 3);
+		AddRequirement(s.requirements, "coin", "", "Denars", 1);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Oak tree seed", "$tree_bushy$", "tree_bushy", "Oak seed", false);
