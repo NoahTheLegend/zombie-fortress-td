@@ -43,7 +43,6 @@ void onInit( CBrain@ this )
 	}	
 	
 	blob.server_SetHealth(blob.getInitialHealth() + (blob.getInitialHealth() * Maths::Min(getPlayersCount(), 10) * 0.1f));
-	printf(""+blob.getInitialHealth()+" "+blob.getHealth());
 
 //	this.getCurrentScript().removeIfTag	= "dead";   
 //	this.getCurrentScript().runFlags |= Script::tick_blob_in_proximity;

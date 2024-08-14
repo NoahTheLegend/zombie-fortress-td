@@ -166,11 +166,12 @@ shared class ZombiesSpawns : RespawnSystem
 			
             CPlayer@ player = getPlayerByUsername(p_info.username); // is still connected?
 
-            if (player is null)
+            if (player is null || player.getTeamNum() == getRules().getSpectatorTeamNum())
             {
 				RemovePlayerFromSpawn(p_info);
                 return;
             }
+
             if (player.getTeamNum() != int(p_info.team))
             {
 				player.server_setTeamNum(1);
@@ -185,7 +186,7 @@ shared class ZombiesSpawns : RespawnSystem
 			}
 
 			p_info.blob_name = "builder"; //hard-set the respawn blob
-            CBlob@ playerBlob = SpawnPlayerIntoWorld( getSpawnLocation(p_info), p_info);
+            CBlob@ playerBlob = SpawnPlayerIntoWorld(getSpawnLocation(p_info), p_info);
 
             if (playerBlob !is null)
             {
@@ -278,6 +279,8 @@ shared class ZombiesSpawns : RespawnSystem
 
     void AddPlayerToSpawn( CPlayer@ player )
     {
+		if (player.getTeamNum() == getRules().getSpectatorTeamNum()) return;
+		
 		s32 tickspawndelay = 0;
 		if (player.getDeaths() != 0)
 		{

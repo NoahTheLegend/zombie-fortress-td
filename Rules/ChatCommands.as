@@ -40,7 +40,7 @@ bool onServerProcessChat(CRules@ this, const string& in text_in, string& out tex
 		for (u32 i = 0; i < all.length; i++)
 		{
 			CBlob@ blob = all[i];
-			print("[" + blob.getName() + " " + blob.getNetworkID() + "] ");
+			//print("[" + blob.getName() + " " + blob.getNetworkID() + "] ");
 		}
 	}
 
@@ -204,7 +204,7 @@ bool onClientProcessChat(CRules@ this, const string& in text_in, string& out tex
 		for (u32 i = 0; i < all.length; i++)
 		{
 			CBlob@ blob = all[i];
-			print("[" + blob.getName() + " " + blob.getNetworkID() + "] ");
+			//print("[" + blob.getName() + " " + blob.getNetworkID() + "] ");
 
 			if (blob.getShape() !is null)
 			{
@@ -214,7 +214,7 @@ bool onClientProcessChat(CRules@ this, const string& in text_in, string& out tex
 					for (uint i = 0; i < overlapping.length; i++)
 					{
 						CBlob@ overlap = overlapping[i];
-						print("       " + overlap.getName() + " " + overlap.isLadder());
+						//print("       " + overlap.getName() + " " + overlap.isLadder());
 					}
 				}
 			}

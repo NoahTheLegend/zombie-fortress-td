@@ -123,7 +123,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
     {
         if (isClient())
         {
-            this.getSprite().PlaySound(params.read_string(), 1.0f, 1.0f + XORRandom(11) * 0.01f);
+            this.getSprite().PlaySound(params.read_string(), 2.0f, 1.0f + XORRandom(11) * 0.01f);
         }
     }
     else if (cmd == this.getCommandID("open_menu"))
@@ -331,4 +331,38 @@ string GetRandomComponent(const string[] &in components, u32 seed)
 {
     u32 index = NextRandom(components.length(), seed);
     return components[index];
+}
+
+void onRender(CSprite@ this)
+{
+    return; // fix
+    CBlob@ blob = this.getBlob();
+    if (blob is null) return;
+
+    CBlob@ local = getLocalPlayerBlob();
+    if (local is null) return;
+
+    if (!local.isOverlapping(blob)) return;
+
+    string[] components;
+    if (!blob.get("components", components)) return;
+
+    Vec2f pos = blob.getPosition() - Vec2f(8, 32);
+    f32 row = components.size() == 1 ? 0 : components.size() * 8;
+    for (u8 i = 0; i < potion_size; i++)
+    {
+        Vec2f pos2d = getDriver().getScreenPosFromWorldPos(Vec2f(row % 2 == 0 ? -row/2 + (row * i): -row + (row * i), 0) + pos);
+        s8 icon = components.size() > i ? getComponentNum(components[i]) : -1;
+
+        if (icon == -1) continue;
+        GUI::DrawIcon("Component.png", icon, Vec2f(16, 16), pos2d, 1.5f * getCamera().targetDistance);
+    }
+}
+
+u8 getComponentNum(string c)
+{
+    if (c == "bone") return 1;
+    else if (c == "nut") return 2;
+    else if (c == "grass") return 3;
+    else return 0; // wheatbunch
 }

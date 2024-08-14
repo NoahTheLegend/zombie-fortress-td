@@ -30,6 +30,8 @@ shared class RespawnSystem
 
 		if (player !is null)
 		{
+			if (player.getTeamNum() == getRules().getSpectatorTeamNum()) return null;
+
 			CBlob @newBlob = server_CreateBlob(p_info.blob_name, 1, at);
 			newBlob.server_SetPlayer(player);
 			player.server_setTeamNum(1);
