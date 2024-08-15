@@ -10,7 +10,7 @@ void onStateChange( CRules@ this, const u8 oldState )
 		{
 			CBlob@ playerBlob = getLocalPlayerBlob();
 			int teamNum = playerBlob !is null ? playerBlob.getTeamNum() : localplayer.getTeamNum() ; // bug fix (cause in singelplayer player team is 255)
-			if (teamNum == this.getTeamWon())
+			if (teamNum == this.getTeamWon() || (this.getTeamWon() == 1 && teamNum == this.getSpectatorTeamNum()))
 			{
 				Sound::Play("/FanfareWin.ogg");
 			}

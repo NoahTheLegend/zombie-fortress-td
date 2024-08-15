@@ -194,11 +194,16 @@ void onTick(CBlob@ this)
 			CBlob@ other = blobs[step];
 			if (other is this) continue; //lets not run away from / try to eat ourselves...
 			if (other.hasTag("flesh")) continue;
-
-			if (other.getName() == "stone_door" || other.getName() == "obstructor")
+			if (other.getName() == "stone_door")
 			{
 				Vec2f vel(0,0);
 				this.server_Hit(other,other.getPosition(),vel,0.05,Hitters::builder, false);
+				break;				
+			}
+			if (other.getName() == "obstructor")
+			{
+				Vec2f vel(0,0);
+				this.server_Hit(other,other.getPosition(),vel,0.25,Hitters::builder, false);
 				break;				
 			}
 			if (other.getName() == "wooden_door" || other.getName() == "wooden_platform" || other.getTeamNum()!=this.getTeamNum())

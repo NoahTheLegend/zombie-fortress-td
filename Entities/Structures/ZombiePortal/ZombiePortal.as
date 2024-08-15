@@ -165,6 +165,11 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		damage *= 0.05f;
 	}
 
+	if (customData == Hitters::crush)
+	{
+		damage *= 1.0f;
+	}
+
 	if (customData == Hitters::explosion)
 	{
 		damage *= 4;
