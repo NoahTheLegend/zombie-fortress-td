@@ -182,7 +182,7 @@ void onTick(CBlob@ this)
 		this.Tag(chomp_tag);
 		string name = this.getName();
 		CBlob@[] blobs;
-		this.getMap().getBlobsInRadius( this.getPosition(), 16.0, @blobs );
+		this.getMap().getBlobsInRadius( this.getPosition(), 24.0, @blobs );
 		for (uint step = 0; step < blobs.length; ++step)
 		{
 			//TODO: sort on proximity? done by engine?
@@ -233,7 +233,7 @@ void onTick(CBlob@ this)
 					vel.Normalize();
 					HitInfo@[] hitInfos;
 					CMap @map = getMap();
-					if (map.getHitInfosFromArc( this.getPosition()- Vec2f(2,0).RotateBy(-vel.Angle()), -vel.Angle(), 90, this.getRadius() + 16.0f, this, @hitInfos ))
+					if (map.getHitInfosFromArc( this.getPosition()- Vec2f(2,0).RotateBy(-vel.Angle()), -vel.Angle(), 90, this.getRadius() + 12.0f, this, @hitInfos ))
 					{
 						//HitInfo objects are sorted, first come closest hits
 						bool hit_block = false;

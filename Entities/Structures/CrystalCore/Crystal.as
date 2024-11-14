@@ -1,8 +1,8 @@
 #include "Hitters.as";
 
-const int shine_delay = 75;
+const int shine_delay = 90;
 const int gradient_freq = 30;
-const f32 light_radius = 200.0f;
+const f32 light_radius = 80.0f;
 
 void onInit(CBlob@ this)
 {
@@ -15,6 +15,10 @@ void onInit(CBlob@ this)
 	consts.mapCollisions = false;
     consts.net_threshold_multiplier = 4.0f;
     shape.SetGravityScale(0);
+
+    this.SetLightRadius(light_radius);
+    this.SetLightColor(SColor(255,255,125,100));
+    this.SetLight(true);
 
     CSprite@ sprite = this.getSprite();
     if (sprite is null) return;
@@ -75,7 +79,7 @@ void onInit(CBlob@ this)
     shiny.AddFrames(frames);
     sprite.SetAnimation(shiny);
     shiny.frame = XORRandom(frames.size());
-    sprite.SetFrameIndex(XORRandom(frames.size()));
+    sprite.animation.frame = XORRandom(frames.size());
 
     this.setPosition(this.getPosition()-Vec2f(0,30));
     this.set_u32("shine_time", getGameTime()+shine_delay+XORRandom(shine_delay));
@@ -120,27 +124,24 @@ void onTick(CBlob@ this)
         Animation@ shiny = sprite.animation;
         if (shiny is null) return;
         
-        //this.SetLightRadius(light_radius);
-        //this.SetLight(true);
-//
         u16 netid = this.getNetworkID();
-        //if ((gt+netid) % gradient_freq == 0)
-        //{
-        //    shiny.frame += 3;
-//
-        //    CFileImage@ image = CFileImage(sprite.getConsts().filename);
-//
-		//    if (image.isLoaded())
-		//    {
-		//    	image.setPixelOffset(this.get_u32("light_breakpoint") + shiny.frame*48);
-        //        SColor color = image.readPixel();
-        //        this.SetLightColor(color);
-//
-        //        #ifndef STAGING
-        //        if (getMap() !is null) getMap().UpdateLightingAtPosition(this.getPosition(), light_radius);
-        //        #endif
-        //    }
-        //}
+        if ((gt+netid) % gradient_freq == 0)
+        {
+            shiny.frame += 3;
+
+            CFileImage@ image = CFileImage(sprite.getConsts().filename);
+
+            if (image.isLoaded())
+            {
+            	image.setPixelOffset(this.get_u32("light_breakpoint") + shiny.frame*48);
+                SColor color = image.readPixel();
+                this.SetLightColor(color);
+
+                #ifndef STAGING
+                if (getMap() !is null) getMap().UpdateLightingAtPosition(this.getPosition(), light_radius);
+                #endif
+            }
+        }
         if (shiny.frame > shiny.getFramesCount()) shiny.frame = shiny.frame % shiny.getFramesCount();
 
         u8 shine_step = shiny.frame % 3;

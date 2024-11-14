@@ -4,6 +4,8 @@
 
 void onDie(CBlob@ this)
 {
+	if (this.hasTag("dead")) return;
+	
 	Vec2f pos = this.getPosition();
 	f32 fall_angle = 0.0f;
 

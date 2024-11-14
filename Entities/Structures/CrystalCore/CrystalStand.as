@@ -30,7 +30,7 @@ void onInit(CBlob@ this)
 		AddRequirement(s.requirements, "coin", "", "Denars", 25);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Stone", "$mat_stone$", "mat_stone", "Transform coins rocks.", false);
+		ShopItem@ s = addShopItem(this, "Stone", "$mat_stone$", "mat_stone", "Transform coins into rocks.", false);
 		AddRequirement(s.requirements, "coin", "", "Denars", 50);
 	}
 	{

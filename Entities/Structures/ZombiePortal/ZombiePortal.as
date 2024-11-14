@@ -1,208 +1,172 @@
-﻿// Builder Workshop
+﻿#include "Hitters.as";
 
-//#include "Requirements.as"
-//#include "ShopCommon.as";
-//#include "Descriptions.as";
-//#include "WARCosts.as";
-//#include "CheckSpam.as";
-#include "Hitters.as";
-
-void onInit( CBlob@ this )
-{	 
-	//this.set_TileType("background tile", CMap::tile_wood_back);
-	//this.getSprite().getConsts().accurateLighting = true;
-
-	this.getSprite().SetZ(-50); //background
-	CSpriteLayer@ portal = this.getSprite().addSpriteLayer( "portal", "ZombiePortal.png" , 64, 64, -1, -1 );
-	CSpriteLayer@ lightning = this.getSprite().addSpriteLayer( "lightning", "EvilLightning.png" , 32, 32, -1, -1 );
-	Animation@ anim = portal.addAnimation( "default", 0, true );
-	Animation@ lanim = lightning.addAnimation( "default", 4, false );
-	for (int i=0; i<7; i++) lanim.AddFrame(i*4);
-	Animation@ lanim2 = lightning.addAnimation( "default2", 4, false );
-	for (int i=0; i<7; i++) lanim2.AddFrame(i*4+1);
-	anim.AddFrame(1);
-	portal.SetRelativeZ( 1000 );
-//	portal.SetOffset(Vec2f(0,-24));
-//	lightning.SetOffset(Vec2f(0,-24));
-	this.getShape().getConsts().mapCollisions = false;
-	this.set_bool("portalbreach",false);
-	this.set_bool("portalplaybreach",false);
-	this.SetLight(false);
-	this.SetLightRadius( 64.0f );
-	
-	this.SetMinimapVars("mipmip.png", 2, Vec2f(16, 8));
-	this.SetMinimapRenderAlways(true);
+void onInit(CBlob@ this)
+{   
+    this.getSprite().SetZ(-50);
+    
+    CSpriteLayer@ portal = this.getSprite().addSpriteLayer("portal", "ZombiePortal.png", 64, 64);
+    CSpriteLayer@ lightning = this.getSprite().addSpriteLayer("lightning", "EvilLightning.png", 32, 32);
+    
+    portal.addAnimation("default", 0, true).AddFrame(1);
+    lightning.addAnimation("default", 4, false);
+    lightning.addAnimation("default2", 4, false);
+    
+    for (int i = 0; i < 7; i++) {
+        lightning.getAnimation("default").AddFrame(i * 4);
+        lightning.getAnimation("default2").AddFrame(i * 4 + 1);
+    }
+    
+    portal.SetRelativeZ(1000);
+    
+    this.getShape().getConsts().mapCollisions = false;
+    this.set_bool("portalbreach", false);
+    this.set_bool("portalplaybreach", false);
+    this.SetLight(false);
+    this.SetLightRadius(64.0f);
+    
+    this.SetMinimapVars("mipmip.png", 2, Vec2f(16, 8));
+    this.SetMinimapRenderAlways(true);
 }
 
 void onDie(CBlob@ this)
 {
-	server_DropCoins(this.getPosition() + Vec2f(0,-32.0f), 100);
+    server_DropCoins(this.getPosition() + Vec2f(0, -32.0f), 100);
 
-	CBlob@[] portals;
-	getBlobsByName("ZombiePortal", @portals);
+    CBlob@[] portals;
+    getBlobsByName("ZombiePortal", @portals);
 
-	if (portals.length == 0)
-	{
-		u8 team = 1;
-		getRules().SetTeamWon(team);
-		getRules().SetCurrentState(GAME_OVER);
-		CTeam@ teamis = getRules().getTeam(team);
-		getRules().set_s32("restart_rules_after_game", getGameTime() + 1200);
+    if (portals.length == 0) {
+        u8 team = 1;
+        getRules().SetTeamWon(team);
+        getRules().SetCurrentState(GAME_OVER);
+        getRules().set_s32("restart_rules_after_game", getGameTime() + 1200);
+        
+        CTeam@ teamis = getRules().getTeam(team);
+        if (teamis !is null) {
+            getRules().SetGlobalMessage(teamis.getName() + ", you've destroyed all portals, congratulations!");
+        }
 
-		if (teamis !is null)
-		{
-			getRules().SetGlobalMessage(teamis.getName() + ", you've destroyed all portals, congratulations!");
-		}
-
-		CBlob@[] zombies;
-		getBlobsByTag("zombie", @zombies);
-		for (u16 i = 0; i < zombies.length; i++)
-		{
-			if (zombies[i] !is null) zombies[i].server_Die();
-		}
-	}
+        CBlob@[] zombies;
+        getBlobsByTag("zombie", @zombies);
+        for (u16 i = 0; i < zombies.length; i++) {
+            if (zombies[i] !is null) zombies[i].server_Die();
+        }
+    }
 }
 
-void onTick( CBlob@ this)
+void onTick(CBlob@ this)
 {
-	if(this is null){ return; }
-	if(this.getHealth() <= 0){ return; }
+    if (this.getHealth() <= 0) return;
 
-	int spawnRate = 15 + 175*((this.getHealth()-1.0f)/this.getInitialHealth());
-	if (spawnRate < 15) spawnRate = 15;
+	    int spawnRate = 150 + (this.getNetworkID() % 60);
 
-	if (getGameTime() % spawnRate == 0 && this.get_bool("portalbreach"))
-	{
-		this.getSprite().PlaySound("Thunder");
-		CSpriteLayer@ lightning = this.getSprite().getSpriteLayer("lightning");
-		if (XORRandom(4)>2) lightning.SetAnimation("default"); else lightning.SetAnimation("default2");
-		//lightning.SetFrame(0);
-	}
+	if (getGameTime() % spawnRate == 0 && this.get_bool("portalbreach")) {
+	    this.getSprite().PlaySound("Thunder");
+	    CSpriteLayer@ lightning = this.getSprite().getSpriteLayer("lightning");
+	    lightning.SetAnimation(XORRandom(4) > 2 ? "default" : "default2");
+	}	
 
 	if (this.get_bool("portalplaybreach")) {
-		this.getSprite().PlaySound("PortalBreach");
-		this.set_bool("portalplaybreach",false);
-		this.SetLight(true);
-		this.SetLightRadius( 64.0f );		
+	    this.getSprite().PlaySound("PortalBreach");
+	    this.set_bool("portalplaybreach", false);
+	    this.SetLight(true);
+	    this.SetLightRadius(64.0f);
 	}
-	if (!getNet().isServer()) return;
-	int num_zombies = getRules().get_s32("num_zombies");
-	if (this.get_bool("portalbreach"))
-	{
-		if ((getGameTime() % spawnRate == 0) && num_zombies < 200)
-		{
-		CBlob@[] blobs;
-		getMap().getBlobsInRadius( this.getPosition(), 256, @blobs );
-		if (blobs.length == 0) return;
 
-		CBlob@[] zambies;
-		getMap().getBlobsInRadius( this.getPosition(), 256, @zambies );
-		int zombies = 0;
-		for (u16 i = 0; i < zambies.length; i++)
-		{
-			if (zambies[i] !is null && zambies[i].hasTag("zombie")) zombies++;
-		}
-		if (zombies > 16+getPlayersCount()*1.5f) return;
-		
-			Vec2f sp = this.getPosition();
-			
-			int r;
-			r = XORRandom(9);
-			int rr = XORRandom(8);
-			if (r==8)
-			server_CreateBlob( "Wraith", -1, sp);
-			else										
-			if (r==7 && rr<3)
-			server_CreateBlob( "Greg", -1, sp);
-			else					
-			if (r==6)
-			server_CreateBlob( "ZombieKnight", -1, sp);
-			else
-			if (r>=3)
-			server_CreateBlob( "Zombie", -1, sp);
-			else
-			server_CreateBlob( "Skeleton", -1, sp);
-			if ((r==7 && rr<3) || (r==8 && rr<3) || (r<7))
-			{
-				num_zombies++;
-				getRules().set_s32("num_zombies",num_zombies);
-				
-			}
-		}
-	}
-	else
-	{
-		if (getGameTime() % 600 == 0)
-		{
-			Vec2f sp = this.getPosition();
-			
-		
-			CBlob@[] blobs;
-			this.getMap().getBlobsInRadius( sp, 64, @blobs );
-			for (uint step = 0; step < blobs.length; ++step)
-			{
-				CBlob@ other = blobs[step];
-				if (other.hasTag("player"))
-				{
-					this.set_bool("portalbreach",true);
-					this.set_bool("portalplaybreach",true);
-					this.Sync("portalplaybreach",true);
-					this.Sync("portalbreach",true);
-				}
-			}
-		}
+	if ((getGameTime() + this.getNetworkID()) % 450 == 0) {
+        Vec2f spawnPos = this.getPosition();
+        bool activate = false;
+
+        CBlob@[] nearbyBlobs;
+        this.getMap().getBlobsInRadius(spawnPos, 64, @nearbyBlobs);
+        for (uint i = 0; i < nearbyBlobs.length; ++i) {
+            if (nearbyBlobs[i].hasTag("player")) {
+                activate = true;
+                break;
+            }
+        }
+
+        this.set_bool("portalbreach", activate);
+        this.set_bool("portalplaybreach", activate);
+        this.Sync("portalplaybreach", true);
+        this.Sync("portalbreach", true);
+
+		if (!activate) this.SetLight(false);
+    }
+
+	if (!getNet().isServer()) return;
+
+	int num_zombies = getRules().get_s32("num_zombies");
+
+	if (this.get_bool("portalbreach") && getGameTime() % spawnRate == 0 && num_zombies < 200) {
+	    CBlob@[] players;
+	    getMap().getBlobsInRadius(this.getPosition(), 256, @players);
+
+	    int playerCount = 0;
+	    for (u16 i = 0; i < players.length; i++) {
+	        if (players[i] !is null && players[i].hasTag("player")) playerCount++;
+	    }
+	
+	    int minZombies = playerCount;
+	    int maxZombies = 1 + playerCount * 2;
+	    int zombiesToSpawn = XORRandom(maxZombies - minZombies + 1) + minZombies;
+
+	    float wraithChance = 0.05f;
+	    float gregChance = 0.1f;
+	    float knightChance = 0.15f;
+	    float zombieChance = 0.5f;
+	    float skeletonChance = 0.2f;
+
+	    Vec2f spawnPos = this.getPosition();
+	    for (int i = 0; i < zombiesToSpawn; i++) {
+	        float rand = XORRandom(100) / 100.0f;
+
+	        if (rand < wraithChance) {
+	            server_CreateBlob("Wraith", -1, spawnPos);
+	        } else if (rand < wraithChance + gregChance) {
+	            server_CreateBlob("Greg", -1, spawnPos);
+	        } else if (rand < wraithChance + gregChance + knightChance) {
+	            server_CreateBlob("ZombieKnight", -1, spawnPos);
+	        } else if (rand < wraithChance + gregChance + knightChance + zombieChance) {
+	            server_CreateBlob("Zombie", -1, spawnPos);
+	        } else {
+	            server_CreateBlob("Skeleton", -1, spawnPos);
+	        }
+
+	        num_zombies++;
+	        getRules().set_s32("num_zombies", num_zombies);
+
+	        if (num_zombies >= 200) break;
+	    }
 	}
 }
-void GetButtonsFor( CBlob@ this, CBlob@ caller )
-{
-//	this.set_bool("shop available", this.isOverlapping(caller) /*&& caller.getName() == "builder"*/ );
-}
-							   
+
 f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
 {
-	if (customData == Hitters::cata_stones)
-	{
-		damage *= 0.05f;
-	}
+    switch (customData) {
+        case Hitters::cata_stones: damage *= 0.05f; break;
+        case Hitters::crush: damage *= 1.0f; break;
+        case Hitters::explosion: damage *= 4.0f; break;
+        case Hitters::keg: damage *= 2.0f; break;
+        case Hitters::builder: damage *= 0.75f; break;
+    }
 
-	if (customData == Hitters::crush)
-	{
-		damage *= 1.0f;
-	}
+    Vec2f pos = this.getPosition();
 
-	if (customData == Hitters::explosion)
-	{
-		damage *= 4;
-	}
-	
-	if (customData == Hitters::keg)
-	{
-		damage *= 2;
-	}
+    if (!this.get_bool("portalbreach") && (XORRandom(8) == 0 || damage > 1.0f)) {
+        CBlob@[] nearbyBlobs;
+        this.getMap().getBlobsInRadius(pos, 64, @nearbyBlobs);
 
-	if (customData == Hitters::builder)
-	{
-		damage *= 0.75f;
-	}
+        for (uint i = 0; i < nearbyBlobs.length; ++i) {
+            if (nearbyBlobs[i].hasTag("player")) {
+                this.set_bool("portalbreach", true);
+                this.set_bool("portalplaybreach", true);
+                this.Sync("portalplaybreach", true);
+                this.Sync("portalbreach", true);
+                break;
+            }
+        }
+    }
 
-	Vec2f sp = this.getPosition();
-	
-	if (!this.get_bool("portalbreach") && (XORRandom(8) == 0 || damage > 1.0f))
-	{
-		CBlob@[] blobs;
-		this.getMap().getBlobsInRadius( sp, 64, @blobs );
-		for (uint step = 0; step < blobs.length; ++step)
-		{
-			CBlob@ other = blobs[step];
-			if (other.hasTag("player"))
-			{
-				this.set_bool("portalbreach",true);
-				this.set_bool("portalplaybreach",true);
-				this.Sync("portalplaybreach",true);
-				this.Sync("portalbreach",true);
-			}
-		}
-	}
-
-	return damage;
+    return damage;
 }

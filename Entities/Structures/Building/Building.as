@@ -61,8 +61,9 @@ void onInit( CBlob@ this )
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Transport Tunnel", "$tunnel$", "tunnel", Descriptions::tunnel);
-		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 250);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 50);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 1500);
+		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 200);
+		AddRequirement(s.requirements, "no more", "tunnel", "Tunnel", 3);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Boat Shop", "$boatshop$", "boatshop", Descriptions::boatshop);
