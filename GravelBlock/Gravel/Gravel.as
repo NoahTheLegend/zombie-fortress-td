@@ -66,3 +66,10 @@ void onDie(CBlob@ this)
 {
 	this.getSprite().PlaySound(getRandomRubbleSound());
 }
+
+f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
+{
+	this.getSprite().PlaySound(getRandomRubbleSound());
+
+	return damage;
+}

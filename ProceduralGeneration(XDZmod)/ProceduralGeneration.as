@@ -13,7 +13,7 @@ enum BiomeType
 	Count
 };
 
-const int min_portals = 2;
+const int min_portals = 4;
 const int max_rnd_portals = 4;
 const string[] crystals = {"glacial", "nebula", "celestial"};
 
@@ -120,7 +120,7 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 				switch(LastType)
 				{
 					case BiomeType::Forest: Straight = 1 + r.NextRanged(9);   break;
-					case BiomeType::Desert: Crazy = r.NextRanged(20);         break;
+					case BiomeType::Desert: Crazy = r.NextRanged(50);         break;
 					case BiomeType::Meadow: Uphill = 2 + r.NextRanged(13);    break;
 					case BiomeType::Swamp: Downhill = 5 + r.NextRanged(15);  break;
 					case BiomeType::Caves:
@@ -277,50 +277,91 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 			}
 			
 			const int Depth = j - FakeCaveHeightMap;
-			
+
 			if (heightmap[i] <= j)
 			{
-				World[i][j] = CMap::tile_ground;
+			    World[i][j] = CMap::tile_ground;
 			}
+
 			if (World[i][j] == CMap::tile_ground)
 			{
-				if (Depth > 3)
-				{
-					if (r.NextRanged(2) == 0)
-					{
-						switch(r.NextRanged(2))
-						{
-							case 0: World[i][j] = CMap::tile_stone;    break;
-							case 1: World[i][j] = CMap::tile_stone_d1; break;
-						}
-					}
-				}
-				
-				if (Depth > 6)
-				{
-					if (r.NextRanged(3) == 0)
-					{
-						switch(r.NextRanged(3))
-						{
-							case 0: World[i][j] = CMap::tile_thickstone;    break;
-							case 1: World[i][j] = CMap::tile_thickstone_d1; break;
-							case 2: World[i][j] = CMap::tile_thickstone_d0; break;
-						}
-					}
-				}
+			    bool isGoldCluster = (j > SeaLevel || Depth > 40) && r.NextRanged(1000) < (Maths::Clamp(Depth / 2, 5, 20));
+			    bool isStoneCluster = !isGoldCluster && Depth > 10 && r.NextRanged(1000) < (Maths::Clamp(Depth, 30, 60));
+				bool isPureGoldCluster = !isGoldCluster && !isStoneCluster && Depth > 80 && r.NextRanged(1000) < 20;
 
-				if (j > SeaLevel)
-				{
-					if (r.NextRanged(13) == 0)
-					{
-						World[i][j] = CMap::tile_gold;
-					}
-					else if (biome[i] == BiomeType::Desert && r.NextRanged(9) == 0)
-					{
-						World[i][j] = CMap::tile_gold;
-					}
-				}
+			    if (isGoldCluster || isStoneCluster || isPureGoldCluster)
+			    {
+			        int clusterValue = 20 + r.NextRanged(20);
+			        array<int> xQueue, yQueue;
+
+			        xQueue.push_back(i);
+			        yQueue.push_back(j);
+
+			        while (xQueue.size() > 0 && clusterValue > 0)
+			        {
+			            int x = xQueue[xQueue.size() - 1];
+			            int y = yQueue[yQueue.size() - 1];
+			            xQueue.pop_back();
+			            yQueue.pop_back();
+
+			            if (isGoldCluster)
+			            {
+			                if (World[x][y] == CMap::tile_ground)
+			                {
+			                    if (r.NextRanged(100) < 20)
+			                    {
+			                        World[x][y] = CMap::tile_gold;
+			                    }
+			                    else
+			                    {
+			                        World[x][y] = CMap::tile_stone;
+			                    }
+			                    clusterValue--;
+			                }
+			            }
+						else if (isPureGoldCluster)
+           				{
+           				    if (World[x][y] == CMap::tile_ground)
+           				    {
+           				        World[x][y] = CMap::tile_gold;
+           				        clusterValue--;
+           				    }
+           				}
+			            else if (isStoneCluster)
+			            {
+			                if (World[x][y] == CMap::tile_ground)
+			                {
+			                    World[x][y] = (r.NextRanged(100) < 50) ? CMap::tile_stone : CMap::tile_thickstone;
+			                    clusterValue--;
+			                }
+			            }
+
+			            if (r.NextRanged(100) < 40)
+			            {
+			                for (int dx = -1; dx <= 1; dx++)
+			                {
+			                    for (int dy = -1; dy <= 1; dy++)
+			                    {
+			                        if (dx == 0 && dy == 0) continue;
+
+			                        int nx = x + dx * (1 + r.NextRanged(2));
+			                        int ny = y + dy * (1 + r.NextRanged(2));
+
+			                        if (nx >= 0 && nx < map.tilemapwidth && ny >= 0 && ny < map.tilemapheight)
+			                        {
+			                            if (World[nx][ny] == CMap::tile_ground)
+			                            {
+			                                xQueue.push_back(nx);
+			                                yQueue.push_back(ny);
+			                            }
+			                        }
+			                    }
+			                }
+			            }
+			        }
+			    }
 			}
+
 		}
 	}
 	
@@ -687,6 +728,13 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 			{
 				const int RoofType = r.NextRanged(2) == 0 ? CMap::tile_wood : CMap::tile_castle;
 				const int PillarType = r.NextRanged(2) == 0 ? CMap::tile_wood_back : CMap::tile_castle_back;
+
+				for (u8 g = 0; g < 5+XORRandom(25); g++)
+				{
+					if (XORRandom(3) == 0) continue;
+					Vec2f gpos = Vec2f(i*NodeSize+XORRandom(2), Highest+g) * 8;
+					server_CreateBlob("gravel", -1, gpos+Vec2f(4,4));
+				}
 				
 				World[i*NodeSize-1][Highest-2] = PillarType;
 				World[i*NodeSize-1][Highest-3] = PillarType;
@@ -724,7 +772,7 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 			{
 				if (biome[i] == BiomeType::Swamp)
 				{
-					if (r.NextRanged(15) == 0)
+					if (r.NextRanged(25) == 0)
 					{
 						const string tree_name = r.NextRanged(2) == 0 ? "tree_pine" : "tree_bushy";
 						SpawnTree(tree_name, Vec2f(i*8, j*8));
@@ -746,14 +794,14 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 						World[i][j] = CMap::tile_grass + r.NextRanged(4);
 					}
 					
-					if((biome[i] == BiomeType::Forest || biome[i] == BiomeType::Caves) && r.NextRanged(10) == 0) //Trees
+					if((biome[i] == BiomeType::Forest || biome[i] == BiomeType::Caves) && r.NextRanged(12) == 0) //Trees
 					{
 						const string tree_name = j < height/3 ? "tree_pine" : "tree_bushy";
 						SpawnTree(tree_name, Vec2f(i*8, j*8));
 					}
 					
 					//Rare chance for trees in meadows. This is incase world gen screws up and decides only meadows.
-					if (biome[i] == BiomeType::Meadow && r.NextRanged(30) == 0)
+					if (biome[i] == BiomeType::Meadow && r.NextRanged(35) == 0)
 					{
 						const string tree_name = j < height/3 ? "tree_pine" : "tree_bushy";
 						SpawnTree(tree_name, Vec2f(i*8, j*8));
@@ -925,10 +973,10 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 			}
 
 			Vec2f flood_start_pos = crystalPos + Vec2f(0, 24);
-			int flood_tiles_cap = 25 + XORRandom(50);
+			int flood_tiles_cap = 20 + XORRandom(10);
 			uint[] tile_list;
 
-			if (getTileListFromFlood(map, flood_start_pos, tile_list, true, 1.0f, 0.25f, flood_tiles_cap))
+			if (getTileListFromFlood(map, flood_start_pos, tile_list, true, 1.0f, 0.15f, flood_tiles_cap))
 			{
 			    for (u16 i = 0; i < tile_list.size(); i++)
 			    {
@@ -969,7 +1017,7 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 	{
 	    if (biome[x] == BiomeType::Caves && r.NextRanged(3) == 0)
 	    {
-	        Vec2f portalPos(x * map.tilesize, heightmap[x] * map.tilesize + 128 + XORRandom(256));
+	        Vec2f portalPos(x * map.tilesize, heightmap[x] * map.tilesize + 128 + XORRandom(1028));
 			
 			bool do_continue;
 			for (int cr = 0; cr < crystalPositions.size(); cr++)
@@ -1017,14 +1065,16 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 	        if (!roomIsClear)
 	        {
 	            Vec2f flood_start_pos = portalPos;
-				int flood_tiles_cap = 80 + XORRandom(120);
+				int flood_tiles_cap = 80 + XORRandom(200);
 				uint[] tile_list;
 
-				if (getTileListFromFlood(map, flood_start_pos, tile_list, true, 1.0f, 0.1f+XORRandom(15)*0.01f, flood_tiles_cap))
+				if (getTileListFromFlood(map, flood_start_pos, tile_list, true, 1.0f, 0.1f+XORRandom(11)*0.01f, flood_tiles_cap))
 				{
 				    for (u16 i = 0; i < tile_list.size(); i++)
 				    {
-				        map.server_SetTile(map.getTileWorldPosition(tile_list[i]), CMap::tile_ground_back);
+						Vec2f tpos = map.getTileWorldPosition(tile_list[i]);
+				        map.server_SetTile(tpos, CMap::tile_ground_back);
+						server_CreateBlob("gravel", -1, tpos - Vec2f(4,4));
 				    }
 				}
 	        }
@@ -1038,17 +1088,19 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 	while (portals_spawned < max_portals)
 	{
 	    int x = XORRandom(width);
-	    Vec2f portalPos(x * map.tilesize, heightmap[x] * map.tilesize + 128 + XORRandom(256));
+	    Vec2f portalPos(x * map.tilesize, heightmap[x] * map.tilesize + 128 + XORRandom(1028));
 
 		Vec2f flood_start_pos = portalPos;
-		int flood_tiles_cap = 80 + XORRandom(120);
+		int flood_tiles_cap = 80 + XORRandom(200);
 		uint[] tile_list;
 
-		if (getTileListFromFlood(map, flood_start_pos, tile_list, true, 1.0f, 0.1f+XORRandom(15)*0.01f, flood_tiles_cap))
+		if (getTileListFromFlood(map, flood_start_pos, tile_list, true, 1.0f, 0.1f+XORRandom(11)*0.01f, flood_tiles_cap))
 		{
 		    for (u16 i = 0; i < tile_list.size(); i++)
 		    {
-		        map.server_SetTile(map.getTileWorldPosition(tile_list[i]), CMap::tile_ground_back);
+				Vec2f tpos = map.getTileWorldPosition(tile_list[i]); 
+		        map.server_SetTile(tpos, CMap::tile_ground_back);
+				if (XORRandom(3)==0) server_CreateBlob("gravel", -1, tpos - Vec2f(4,4));
 		    }
 		}
 

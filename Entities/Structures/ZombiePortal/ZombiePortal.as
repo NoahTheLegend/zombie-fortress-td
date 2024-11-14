@@ -73,7 +73,7 @@ void onTick(CBlob@ this)
 	    this.SetLightRadius(64.0f);
 	}
 
-	if ((getGameTime() + this.getNetworkID()) % 450 == 0) {
+	if ((getGameTime() + this.getNetworkID()) % 150 == 0) {
         Vec2f spawnPos = this.getPosition();
         bool activate = false;
 
@@ -107,8 +107,8 @@ void onTick(CBlob@ this)
 	        if (players[i] !is null && players[i].hasTag("player")) playerCount++;
 	    }
 	
-	    int minZombies = playerCount;
-	    int maxZombies = 1 + playerCount * 2;
+	    int minZombies = Maths::Max(0, playerCount);
+	    int maxZombies = 1 + (playerCount-1) * 2;
 	    int zombiesToSpawn = XORRandom(maxZombies - minZombies + 1) + minZombies;
 
 	    float wraithChance = 0.05f;
