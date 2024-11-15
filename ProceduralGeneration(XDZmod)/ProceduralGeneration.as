@@ -986,14 +986,14 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 
 			if (!spawned_first_crystal)
 	        {
-	            server_CreateBlob("crystal" + crystals[XORRandom(crystals.size())], -1, crystalPos - Vec2f(-4,12));
+	            server_CreateBlob("crystal" + crystals[XORRandom(crystals.size())], 1, crystalPos - Vec2f(-4,12));
 	            lastCrystalPosition = crystalPos;
 	            spawned_first_crystal = true;
 				crystalPositions.push_back(crystalPos);
 	        }
 	        else if (!spawned_second_crystal && (crystalPos - lastCrystalPosition).Length() > 64.0f && XORRandom(100) < 33)
 	        {
-	            server_CreateBlob("crystal" + crystals[XORRandom(crystals.size())], -1, crystalPos - Vec2f(-4,12));
+	            server_CreateBlob("crystal" + crystals[XORRandom(crystals.size())], 1, crystalPos - Vec2f(-4,12));
 	            spawned_second_crystal = true;
 				crystalPositions.push_back(crystalPos);
 	            break;
@@ -1006,7 +1006,7 @@ bool loadProceduralGenMap(CMap@ map, int&in map_seed)
 	    int x = crystal_spawn_start + XORRandom(crystal_spawn_end - crystal_spawn_start);
 	    Vec2f crystalPos(x * map.tilesize, heightmap[x] * map.tilesize);
 
-	    server_CreateBlob("crystal" + crystals[XORRandom(crystals.size())], -1, crystalPos - Vec2f(-4,12));
+	    server_CreateBlob("crystal" + crystals[XORRandom(crystals.size())], 1, crystalPos - Vec2f(-4,12));
 		crystalPositions.push_back(crystalPos);
 	}
 
