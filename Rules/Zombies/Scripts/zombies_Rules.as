@@ -102,7 +102,8 @@ shared class ZombiesSpawns : RespawnSystem
 
 				pcount++;
 			}
-			if (everyone_dead == total_count && total_count != 0 && pcount > 1) getRules().set_bool("everyones_dead",true); 
+			printf("Team lost, pcount: "+pcount);
+			if (everyone_dead == total_count && total_count != 0 && pcount > 1) getRules().set_bool("everyones_dead", true); 
 			//if (getGameTime() % (10*getTicksASecond()) == 0) warn("ED:"+everyone_dead+" TC:"+total_count);
 		}
     }
