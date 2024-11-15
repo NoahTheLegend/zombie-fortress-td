@@ -83,9 +83,10 @@ void ManageGrapple(CBlob@ this, ArcherInfo@ archer)
 	{
 		if (getKnocked(this) < 1)
 		{
-			Sound::Play("/Stun", pos, 1.0f, this.getSexNum() == 0 ? 1.0f : 2.0f);
-			SetKnocked(this, 22);
-			this.setVelocity(vel * 1.6);
+			Sound::Play("/Stun", pos, 1.0f, this.getSexNum() == 0 ? 1.5f : 2.0f);
+			SetKnocked(this, 20);
+			
+			this.setVelocity(Vec2f(vel.x * 1.6f, vel.y > 0 ? vel.y : vel.y * 1.6f));
 		}
 
 		// cancel charging
