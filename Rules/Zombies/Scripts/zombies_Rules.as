@@ -94,7 +94,15 @@ shared class ZombiesSpawns : RespawnSystem
         }
 		if (getRules().isMatchRunning())
 		{
-			if (everyone_dead == total_count && total_count!=0) getRules().set_bool("everyones_dead",true); 
+			int pcount = 0;
+			for (u8 i = 0; i < getPlayersCount(); i++)
+			{
+				CPlayer@ p = getPlayer(i);
+				if (p is null || p.getTeamNum() == getRules().getSpectatorTeamNum()) continue;
+
+				pcount++;
+			}
+			if (everyone_dead == total_count && total_count != 0 && pcount > 1) getRules().set_bool("everyones_dead",true); 
 			//if (getGameTime() % (10*getTicksASecond()) == 0) warn("ED:"+everyone_dead+" TC:"+total_count);
 		}
     }
