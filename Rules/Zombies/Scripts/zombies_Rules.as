@@ -390,12 +390,12 @@ shared class ZombiesCore : RulesCore
 		CMap@ map = getMap();
 		if (map.getDayTime() > 0.3f && map.getDayTime() < 0.75f)
 		{				
-			f32 mod = Maths::Log(dayNumber)+Maths::Min(10, dayNumber);
+			f32 mod = Maths::Log(dayNumber)+Maths::Min(100, dayNumber);
 			rules.set_f32("pool", base_pool + (getPlayersCount() * (day_pool+XORRandom(day_pool)) * mod));
 		}
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) { rules.SetCurrentState(GAME);}
-		rules.set_f32("difficulty", Maths::Clamp(difficulty, 1.5f, 4.0f)); // change some time later
+		rules.set_f32("difficulty", Maths::Clamp(difficulty, 1.5f, 5.0f)); // change some time later
 		int intdif = difficulty;
 		if (intdif<=0) intdif=1;
 		int spawnRate = 240/((dayNumber+1)/2);
@@ -413,7 +413,7 @@ shared class ZombiesCore : RulesCore
 			//printf("Zombies: "+num_zombies+" Extra: "+extra_zombies);			
 		}
 			
-	    if (getGameTime() % (spawnRate) == 0 && num_zombies<350)
+	    if (getGameTime() % (spawnRate) == 0 && num_zombies<500)
         {
 			CMap@ map = getMap();
 			if (map !is null)

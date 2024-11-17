@@ -23,6 +23,9 @@ void onInit(CBlob@ this)
     string[] components;
     this.set("components", components);
 
+    this.Tag("builder always hit");
+	this.Tag("builder urgent hit");
+
     string[] crafts;
     string[][] recipes;
 
