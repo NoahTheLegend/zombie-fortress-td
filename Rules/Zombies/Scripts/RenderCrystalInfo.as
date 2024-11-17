@@ -12,7 +12,7 @@ void onRender(CRules@ this)
         CSprite@ sprite = crystal.getSprite();
         if (sprite is null) continue;
 
-        int hp = Maths::Round(crystal.getHealth()/crystal.getInitialHealth()*100*10)/10;
+        int hp = Maths::Round(crystal.getHealth()/crystal.getInitialHealth()*100*10)/10 / 2;
         SpriteConsts@ consts = sprite.getConsts();
         string filename = consts.filename;
 
